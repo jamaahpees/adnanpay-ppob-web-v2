@@ -1,7 +1,7 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { Receipt, Download, Filter, ArrowUpDown } from 'lucide-react'
+import { useEffect, useState, useMemo } from 'react'
+import { Receipt, Download, Filter, ArrowUpDown, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { AdminPageHeader } from '@/components/features/admin-page-header'
@@ -17,23 +17,16 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { cn, formatRupiah } from '@/lib/utils'
-import {
-  orders as seedOrders,
-  type AdminOrder,
-  type PaymentStatus,
-  type FulfillmentStatus,
-} from '@/components/features/admin-mock-data'
+import { getAdminOrders } from '@/actions/dashboard'
+import type { AdminOrder } from '@/actions/dashboard'
 
 const NUMERIC_MONO = {
   fontFamily: 'var(--font-mono-jb), ui-monospace, monospace',
 } as const
 
-type StatusFilter = 'all' | PaymentStatus
+type StatusFilter = 'all' | 'success' | 'pending' | 'failed'
 
-const STATUS_VARIANT: Record<
-  PaymentStatus | FulfillmentStatus,
-  { label: string; classes: string }
-> = {
+const STATUS_VARIANT: Record<string, { label: string; classes: string }> = {
   success: {
     label: 'Sukses',
     classes: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-600',
@@ -48,8 +41,8 @@ const STATUS_VARIANT: Record<
   },
 }
 
-function StatusBadge({ status }: { status: PaymentStatus | FulfillmentStatus }) {
-  const conf = STATUS_VARIANT[status]
+function StatusBadge({ status }: { status: string }) {
+  const conf = STATUS_VARIANT[status] || STATUS_VARIANT.pending
   return (
     <Badge variant="outline" className={cn('font-medium', conf.classes)}>
       <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-current opacity-70" />
@@ -99,7 +92,6 @@ function downloadCsv(rows: AdminOrder[]) {
     )
   }
   const csv = lines.join('\n')
-  // Prefix BOM so Excel reads UTF-8 correctly.
   const blob = new Blob([`﻿${csv}`], {
     type: 'text/csv;charset=utf-8;',
   })
@@ -116,13 +108,29 @@ function downloadCsv(rows: AdminOrder[]) {
 }
 
 export default function AdminTransaksiPage() {
+  const [orders, setOrders] = useState<AdminOrder[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
   const [sortNewest, setSortNewest] = useState(true)
 
+  useEffect(() => {
+    async function load() {
+      const result = await getAdminOrders(100, 0)
+      if (result.success && result.data) {
+        setOrders(result.data)
+      } else {
+        setError(result.error || 'Failed to load')
+      }
+      setLoading(false)
+    }
+    load()
+  }, [])
+
   const filtered = useMemo(() => {
-    let list: AdminOrder[] = [...seedOrders]
+    let list: AdminOrder[] = [...orders]
     if (statusFilter !== 'all') {
       list = list.filter((o) => o.paymentStatus === statusFilter)
     }
@@ -136,7 +144,7 @@ export default function AdminTransaksiPage() {
       sortNewest ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date),
     )
     return list
-  }, [statusFilter, from, to, sortNewest])
+  }, [orders, statusFilter, from, to, sortNewest])
 
   const totalProfit = filtered.reduce((s, o) => s + o.profit, 0)
   const successCount = filtered.filter(
@@ -154,6 +162,36 @@ export default function AdminTransaksiPage() {
     toast.success('CSV diunduh', {
       description: `${filtered.length} baris transaksi diekspor.`,
     })
+  }
+
+  if (loading) {
+    return (
+      <div>
+        <AdminPageHeader
+          title="Riwayat Transaksi"
+          description="Daftar komprehensif transaksi pelanggan."
+          icon={Receipt}
+        />
+        <div className="flex h-64 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div>
+        <AdminPageHeader
+          title="Riwayat Transaksi"
+          description="Daftar komprehensif transaksi pelanggan."
+          icon={Receipt}
+        />
+        <div className="flex h-64 items-center justify-center text-muted-foreground">
+          {error}
+        </div>
+      </div>
+    )
   }
 
   return (

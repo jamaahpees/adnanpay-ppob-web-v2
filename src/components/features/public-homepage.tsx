@@ -5,19 +5,21 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
   Search,
-  LayoutGrid,
-  List,
   Smartphone,
+  Wifi,
   Gamepad2,
+  Wallet,
+  Zap,
+  PlayCircle,
   ShoppingCart,
   Check,
   Sparkles,
+  ArrowLeft,
   ArrowRight,
   Loader2,
   QrCode,
-  Wallet,
   Landmark,
-  Zap,
+  ChevronRight,
 } from 'lucide-react'
 
 import { cn, formatRupiah } from '@/lib/utils'
@@ -25,13 +27,13 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import {
-  pulsaProducts,
-  gameProducts,
+  categories,
+  getBrandsByCategory,
   paymentMethods,
-  type PulsaProduct,
-  type GameProduct,
+  type Category,
+  type Brand,
+  type Denomination,
   type PaymentMethod,
 } from './public-mock-data'
 import { createOrder } from '@/actions/orders'
@@ -71,12 +73,10 @@ function loadSnapScript(): Promise<void> {
     const s = document.createElement('script')
     s.id = 'midtrans-snap-script'
     s.src = MIDTRANS_SNAP_SRC
-    s.dataset.clientKey =
-      process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY ?? ''
+    s.dataset.clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY ?? ''
     s.async = true
     s.onload = () => resolve()
-    s.onerror = () =>
-      reject(new Error('Gagal memuat Midtrans Snap script'))
+    s.onerror = () => reject(new Error('Gagal memuat Midtrans Snap script'))
     document.head.appendChild(s)
   })
 }
@@ -94,10 +94,14 @@ function mockInvoiceCode(): string {
   return `INV-${ymd}-${suffix}`
 }
 
-type CatalogMode = 'pulsa' | 'game'
-type ViewMode = 'grid' | 'list'
-
-type SelectedProduct = (PulsaProduct | GameProduct) & { kind: CatalogMode }
+const CATEGORY_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
+  Smartphone,
+  Wifi,
+  Gamepad2,
+  Wallet,
+  Zap,
+  PlayCircle,
+}
 
 const PAYMENT_ICON: Record<PaymentMethod['icon'], React.ComponentType<{ className?: string }>> = {
   qr: QrCode,
@@ -105,49 +109,93 @@ const PAYMENT_ICON: Record<PaymentMethod['icon'], React.ComponentType<{ classNam
   bank: Landmark,
 }
 
+interface SelectedProduct {
+  brand: Brand
+  denom: Denomination
+  category: Category
+}
+
 export function PublicHomepage() {
   const router = useRouter()
-  const [mode, setMode] = React.useState<CatalogMode>('pulsa')
-  const [view, setView] = React.useState<ViewMode>('grid')
-  const [query, setQuery] = React.useState('')
-
+  const [selectedCategory, setSelectedCategory] = React.useState<Category>(categories[0])
+  const [selectedBrand, setSelectedBrand] = React.useState<Brand | null>(null)
   const [selected, setSelected] = React.useState<SelectedProduct | null>(null)
+
+  const [query, setQuery] = React.useState('')
   const [targetId, setTargetId] = React.useState('')
   const [zoneId, setZoneId] = React.useState('')
   const [payment, setPayment] = React.useState<PaymentMethod | null>(null)
   const [paying, setPaying] = React.useState(false)
 
-  const list = React.useMemo((): (PulsaProduct | GameProduct)[] => {
-    const source = mode === 'pulsa' ? pulsaProducts : gameProducts
-    if (!query.trim()) return source
-    const q = query.toLowerCase()
-    return source.filter(
-      (p) => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q),
-    )
-  }, [mode, query])
+  const brands = React.useMemo(
+    () => getBrandsByCategory(selectedCategory.id),
+    [selectedCategory],
+  )
 
-  function switchMode(next: CatalogMode) {
-    if (next === mode) return
-    setMode(next)
+  const filteredBrands = React.useMemo(() => {
+    if (!query.trim()) return brands
+    const q = query.toLowerCase()
+    return brands.filter(
+      (b) => b.name.toLowerCase().includes(q) || b.slug.includes(q),
+    )
+  }, [brands, query])
+
+  const filteredDenoms = React.useMemo(() => {
+    if (!selectedBrand) return []
+    if (!query.trim()) return selectedBrand.denominations
+    const q = query.toLowerCase()
+    return selectedBrand.denominations.filter(
+      (d) => d.name.toLowerCase().includes(q) || d.label.toLowerCase().includes(q),
+    )
+  }, [selectedBrand, query])
+
+  function selectCategory(cat: Category) {
+    if (cat.id === selectedCategory.id) return
+    setSelectedCategory(cat)
+    setSelectedBrand(null)
     setSelected(null)
     setTargetId('')
     setZoneId('')
     setPayment(null)
   }
 
-  function selectProduct(p: PulsaProduct | GameProduct) {
-    setSelected({ ...(p as SelectedProduct), kind: mode })
+  function selectBrand(brand: Brand) {
+    setSelectedBrand(brand)
+    setSelected(null)
     setTargetId('')
     setZoneId('')
     setPayment(null)
-    // Scroll to checkout panel
+    document.getElementById('brand-detail')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }
+
+  function backToBrands() {
+    setSelectedBrand(null)
+    setSelected(null)
+  }
+
+  function selectDenom(denom: Denomination) {
+    if (!selectedBrand) return
+    setSelected({
+      brand: selectedBrand,
+      denom,
+      category: selectedCategory,
+    })
+    setTargetId('')
+    setZoneId('')
+    setPayment(null)
     document.getElementById('checkout-panel')?.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
     })
   }
 
-  const needsZone = selected?.kind === 'game' && (selected as GameProduct).needsZone === true
+  const needsZone =
+    selected?.brand.needsZone === true ||
+    selected?.denom.needsZone === true ||
+    selectedCategory.needsZone === true
   const targetValid =
     targetId.replace(/\D/g, '').length >= 8 &&
     (!needsZone || zoneId.replace(/\D/g, '').length >= 3)
@@ -156,8 +204,9 @@ export function PublicHomepage() {
   async function handlePay() {
     if (!canPay || !selected || !payment) return
     setPaying(true)
-    const numericId = Number(selected.id)
     try {
+      // Try real order creation via server action (numeric product ID if available).
+      const numericId = Number(selected.denom.id.replace(/\D/g, ''))
       const res = await createOrder({
         productId: numericId,
         targetId,
@@ -177,77 +226,85 @@ export function PublicHomepage() {
                 onError: () => resolve(),
                 onClose: () => resolve(),
               })
-              // Safety timeout if callbacks never fire
               setTimeout(resolve, 60_000)
             })
             router.push(`/invoice/${invoiceCode}`)
             return
           } catch (err) {
             console.error('Midtrans Snap failed', err)
-            toast.info('Pembayaran tertunda', {
-              description: 'Redirect ke invoice…',
-            })
+            toast.info('Pembayaran tertunda', { description: 'Redirect ke invoice…' })
             router.push(`/invoice/${invoiceCode}`)
             return
           }
         }
-        // No snap token (mock mode) — straight to invoice.
         toast.success('Pesanan dibuat', {
-          description: res.error /* demo-mode note */ ?? 'Lanjut ke invoice',
+          description: res.error ?? 'Lanjut ke invoice',
         })
         router.push(`/invoice/${invoiceCode}`)
         return
       }
-
-      // Action rejected (e.g. product missing in DB / zod fail) —
-      // fall through to mock flow so the demo still completes.
       console.warn('createOrder rejected, falling back to mock', res.error)
     } catch (err) {
       console.error('createOrder threw, falling back to mock', err)
     }
 
-    // Mock fallback: generate a local invoice code and route to /invoice.
+    // Mock fallback.
     const fallbackCode = mockInvoiceCode()
     toast.success('Pembayaran akan diproses…', {
-      description: `Midtrans Snap terbuka untuk ${selected.name}`,
+      description: `Midtrans Snap terbuka untuk ${selected.denom.name}`,
     })
     setPaying(false)
     router.push(`/invoice/${fallbackCode}`)
   }
 
   return (
-    <div
-      style={{ fontFamily: 'var(--font-jakarta, ui-sans-serif, system-ui)' }}
-    >
+    <div style={{ fontFamily: 'var(--font-jakarta, ui-sans-serif, system-ui)' }}>
       <Hero query={query} setQuery={setQuery} />
 
       <section className="container mx-auto px-4 pb-20">
-        <CategoryTabs
-          mode={mode}
-          onModeChange={switchMode}
-          view={view}
-          onViewChange={setView}
-        >
-          <TargetInput
-            mode={mode}
-            targetId={targetId}
-            setTargetId={setTargetId}
-            zoneId={zoneId}
-            setZoneId={setZoneId}
-          />
-          <Catalog
-            mode={mode}
-            view={view}
-            list={list}
-            selectedId={selected?.id ?? null}
-            onSelect={selectProduct}
-          />
-        </CategoryTabs>
+        {/* Category selector */}
+        <CategoryGrid
+          selected={selectedCategory}
+          onSelect={selectCategory}
+        />
 
+        {/* Breadcrumb */}
+        {selectedBrand && (
+          <div className="mb-5 flex items-center gap-2 text-sm text-slate-500">
+            <button
+              onClick={backToBrands}
+              className="inline-flex items-center gap-1 font-medium text-emerald-700 hover:underline"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              {selectedCategory.name}
+            </button>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <span className="font-semibold text-slate-900">{selectedBrand.name}</span>
+          </div>
+        )}
+
+        {/* Brand grid OR denomination grid */}
+        {!selectedBrand ? (
+          <BrandGrid brands={filteredBrands} onSelect={selectBrand} />
+        ) : (
+          <div id="brand-detail" className="space-y-6">
+            <BrandHeader brand={selectedBrand} />
+            <DenominationGrid
+              denoms={filteredDenoms}
+              selectedId={selected?.denom.id ?? null}
+              onSelect={selectDenom}
+            />
+          </div>
+        )}
+
+        {/* Checkout panel */}
         <CheckoutPanel
           selected={selected}
+          category={selectedCategory}
           targetId={targetId}
+          setTargetId={setTargetId}
           zoneId={zoneId}
+          setZoneId={setZoneId}
           targetValid={targetValid}
           needsZone={needsZone}
           payment={payment}
@@ -275,14 +332,8 @@ function Hero({
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-50 via-white to-amber-50/40" />
-      <div
-        aria-hidden
-        className="absolute -top-24 -right-24 -z-10 h-96 w-96 rounded-full bg-emerald-300/30 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="absolute -bottom-32 -left-32 -z-10 h-96 w-96 rounded-full bg-amber-300/20 blur-3xl"
-      />
+      <div aria-hidden className="absolute -top-24 -right-24 -z-10 h-96 w-96 rounded-full bg-emerald-300/30 blur-3xl" />
+      <div aria-hidden className="absolute -bottom-32 -left-32 -z-10 h-96 w-96 rounded-full bg-amber-300/20 blur-3xl" />
       <div className="container mx-auto px-4 pt-16 pb-12 md:pt-24 md:pb-16">
         <div className="mx-auto max-w-3xl text-center">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/70 px-3 py-1 text-xs font-semibold text-emerald-700 backdrop-blur">
@@ -318,348 +369,180 @@ function Hero({
 }
 
 /* -------------------------------------------------------------------------- */
-/* Category Tabs + View Toggle                                                 */
+/* Category Grid                                                               */
 /* -------------------------------------------------------------------------- */
 
-function CategoryTabs({
-  mode,
-  onModeChange,
-  view,
-  onViewChange,
-  children,
+function CategoryGrid({
+  selected,
+  onSelect,
 }: {
-  mode: CatalogMode
-  onModeChange: (m: CatalogMode) => void
-  view: ViewMode
-  onViewChange: (v: ViewMode) => void
-  children: React.ReactNode
+  selected: Category
+  onSelect: (c: Category) => void
 }) {
   return (
-    <Tabs
-      value={mode}
-      onValueChange={(v) => onModeChange(v as CatalogMode)}
-      className="space-y-6"
-    >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <TabsList className="h-12 w-full rounded-2xl bg-slate-100 p-1.5 sm:w-auto">
-          <TabsTrigger
-            value="pulsa"
-            className="h-9 flex-1 gap-2 rounded-xl text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm sm:flex-none sm:px-6"
+    <div className="mb-8 grid grid-cols-3 gap-3 sm:grid-cols-6">
+      {categories.map((cat) => {
+        const Icon = CATEGORY_ICON[cat.icon] ?? Smartphone
+        const isActive = cat.id === selected.id
+        return (
+          <button
+            key={cat.id}
+            onClick={() => onSelect(cat)}
+            className={cn(
+              'group flex flex-col items-center gap-2 rounded-2xl border p-3 text-center transition-all md:p-4',
+              isActive
+                ? 'border-emerald-500 bg-emerald-50 shadow-sm ring-2 ring-emerald-500/20'
+                : 'border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/40',
+            )}
           >
-            <Smartphone className="h-4 w-4" />
-            Pulsa & Data
-          </TabsTrigger>
-          <TabsTrigger
-            value="game"
-            className="h-9 flex-1 gap-2 rounded-xl text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-emerald-700 data-[state=active]:shadow-sm sm:flex-none sm:px-6"
-          >
-            <Gamepad2 className="h-4 w-4" />
-            Voucher Game
-          </TabsTrigger>
-        </TabsList>
+            <span
+              className={cn(
+                'flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-sm md:h-12 md:w-12',
+                cat.gradient,
+              )}
+            >
+              <Icon className="h-5 w-5 md:h-6 md:w-6" />
+            </span>
+            <span
+              className={cn(
+                'text-xs font-semibold leading-tight md:text-sm',
+                isActive ? 'text-emerald-700' : 'text-slate-700',
+              )}
+            >
+              {cat.name}
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
 
-        <ViewToggle view={view} onViewChange={onViewChange} />
+/* -------------------------------------------------------------------------- */
+/* Brand Grid                                                                  */
+/* -------------------------------------------------------------------------- */
+
+function BrandGrid({
+  brands,
+  onSelect,
+}: {
+  brands: Brand[]
+  onSelect: (b: Brand) => void
+}) {
+  if (brands.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center text-slate-500">
+        Tidak ada produk ditemukan.
       </div>
-
-      <TabsContent value="pulsa" className="space-y-6 outline-none">
-        {children}
-      </TabsContent>
-      <TabsContent value="game" className="space-y-6 outline-none">
-        {children}
-      </TabsContent>
-    </Tabs>
-  )
-}
-
-function ViewToggle({
-  view,
-  onViewChange,
-}: {
-  view: ViewMode
-  onViewChange: (v: ViewMode) => void
-}) {
+    )
+  }
   return (
-    <div className="inline-flex items-center rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
-      <button
-        type="button"
-        onClick={() => onViewChange('grid')}
-        aria-label="Tampilan grid"
-        aria-pressed={view === 'grid'}
-        className={cn(
-          'flex h-9 w-10 items-center justify-center rounded-xl transition-all',
-          view === 'grid'
-            ? 'bg-emerald-600 text-white shadow-sm'
-            : 'text-slate-500 hover:bg-slate-100',
-        )}
-      >
-        <LayoutGrid className="h-4 w-4" />
-      </button>
-      <button
-        type="button"
-        onClick={() => onViewChange('list')}
-        aria-label="Tampilan list"
-        aria-pressed={view === 'list'}
-        className={cn(
-          'flex h-9 w-10 items-center justify-center rounded-xl transition-all',
-          view === 'list'
-            ? 'bg-emerald-600 text-white shadow-sm'
-            : 'text-slate-500 hover:bg-slate-100',
-        )}
-      >
-        <List className="h-4 w-4" />
-      </button>
-    </div>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/* Target Input                                                                */
-/* -------------------------------------------------------------------------- */
-
-function TargetInput({
-  mode,
-  targetId,
-  setTargetId,
-  zoneId,
-  setZoneId,
-}: {
-  mode: CatalogMode
-  targetId: string
-  setTargetId: (v: string) => void
-  zoneId: string
-  setZoneId: (v: string) => void
-}) {
-  return (
-    <div className="rounded-2xl border border-emerald-100 bg-white/80 p-4 shadow-sm backdrop-blur md:p-5">
-      {mode === 'pulsa' ? (
-        <div className="space-y-2">
-          <Label
-            htmlFor="target-hp"
-            className="text-xs font-bold uppercase tracking-wider text-emerald-700"
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      {brands.map((brand) => (
+        <button
+          key={brand.id}
+          onClick={() => onSelect(brand)}
+          className="group relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 text-center transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-900/5"
+        >
+          <span
+            className={cn(
+              'flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br text-3xl shadow-sm',
+              brand.gradient,
+            )}
           >
-            Nomor Tujuan
-          </Label>
-          <div className="relative">
-            <Smartphone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <Input
-              id="target-hp"
-              inputMode="numeric"
-              value={targetId}
-              onChange={(e) => setTargetId(e.target.value.replace(/[^\d]/g, ''))}
-              placeholder="0812 3456 7890"
-              className="h-12 rounded-xl border-slate-200 pl-10 text-base"
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label
-              htmlFor="target-uid"
-              className="text-xs font-bold uppercase tracking-wider text-emerald-700"
-            >
-              User ID
-            </Label>
-            <div className="relative">
-              <Gamepad2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <Input
-                id="target-uid"
-                inputMode="numeric"
-                value={targetId}
-                onChange={(e) => setTargetId(e.target.value.replace(/[^\d]/g, ''))}
-                placeholder="123456789"
-                className="h-12 rounded-xl border-slate-200 pl-10 text-base"
+            {brand.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={brand.image}
+                alt={brand.name}
+                className="h-full w-full rounded-2xl object-cover"
+                onError={(e) => {
+                  ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                }}
               />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label
-              htmlFor="target-zone"
-              className="text-xs font-bold uppercase tracking-wider text-emerald-700"
-            >
-              Zone ID (jika diperlukan)
-            </Label>
-            <Input
-              id="target-zone"
-              inputMode="numeric"
-              value={zoneId}
-              onChange={(e) => setZoneId(e.target.value.replace(/[^\d]/g, ''))}
-              placeholder="1234"
-              className="h-12 rounded-xl border-slate-200 text-base"
-            />
-          </div>
-        </div>
-      )}
+            ) : (
+              <span>{brand.emoji}</span>
+            )}
+          </span>
+          <span className="text-sm font-semibold text-slate-800 group-hover:text-emerald-700">
+            {brand.name}
+          </span>
+          <Badge variant="secondary" className="text-[10px]">
+            {brand.denominations.length} pilihan
+          </Badge>
+        </button>
+      ))}
     </div>
   )
 }
 
 /* -------------------------------------------------------------------------- */
-/* Catalog                                                                     */
+/* Brand Header                                                                */
 /* -------------------------------------------------------------------------- */
 
-function Catalog({
-  mode,
-  view,
-  list,
+function BrandHeader({ brand }: { brand: Brand }) {
+  return (
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-2xl bg-gradient-to-br p-6 text-white',
+        brand.gradient,
+      )}
+    >
+      <div className="relative z-10 flex items-center gap-4">
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-4xl backdrop-blur">
+          {brand.emoji}
+        </span>
+        <div>
+          <h2 className="text-2xl font-bold">{brand.name}</h2>
+          <p className="text-sm text-white/80">
+            {brand.denominations.length} denominasi tersedia
+          </p>
+        </div>
+      </div>
+      <div aria-hidden className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+    </div>
+  )
+}
+
+/* -------------------------------------------------------------------------- */
+/* Denomination Grid                                                           */
+/* -------------------------------------------------------------------------- */
+
+function DenominationGrid({
+  denoms,
   selectedId,
   onSelect,
 }: {
-  mode: CatalogMode
-  view: ViewMode
-  list: (PulsaProduct | GameProduct)[]
+  denoms: Denomination[]
   selectedId: string | null
-  onSelect: (p: PulsaProduct | GameProduct) => void
+  onSelect: (d: Denomination) => void
 }) {
-  if (list.length === 0) {
-    const kindLabel = mode === 'pulsa' ? 'pulsa/data' : 'voucher game'
-    return (
-      <div className="rounded-2xl border border-dashed border-slate-200 bg-white/60 p-12 text-center">
-        <Search className="mx-auto mb-3 h-8 w-8 text-slate-300" />
-        <p className="text-sm font-semibold text-slate-600">
-          Tidak ada {kindLabel} yang cocok.
-        </p>
-        <p className="mt-1 text-xs text-slate-400">
-          Coba kata kunci lain atau pindah tab.
-        </p>
-      </div>
-    )
-  }
-
-  if (view === 'list') {
-    return (
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <table className="w-full text-sm">
-          <thead className="border-b border-slate-100 bg-slate-50/60 text-left">
-            <tr>
-              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">
-                Produk
-              </th>
-              <th className="hidden px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 sm:table-cell">
-                Kategori
-              </th>
-              <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
-                Harga
-              </th>
-              <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
-                Aksi
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {list.map((p, i) => (
-              <tr
-                key={p.id}
-                className={cn(
-                  'ap-animate-in border-b border-slate-50 transition-colors last:border-0 hover:bg-emerald-50/40',
-                  selectedId === p.id && 'bg-emerald-50/70',
-                )}
-                style={{ animationDelay: `${Math.min(i, 8) * 25}ms` }}
-              >
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={cn(
-                        'flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br text-[10px] font-bold text-white',
-                        p.gradient,
-                      )}
-                    >
-                      {p.brand}
-                    </span>
-                    <span className="font-semibold text-slate-800">{p.name}</span>
-                  </div>
-                </td>
-                <td className="hidden px-4 py-3 sm:table-cell">
-                  <Badge
-                    variant="outline"
-                    className="border-slate-200 bg-slate-50 text-slate-600"
-                  >
-                    {p.category}
-                  </Badge>
-                </td>
-                <td className="px-4 py-3 text-right font-mono-receipt font-semibold text-slate-900">
-                  {formatRupiah(p.price)}
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Button
-                    size="sm"
-                    variant={selectedId === p.id ? 'default' : 'outline'}
-                    onClick={() => onSelect(p)}
-                    className={
-                      selectedId === p.id
-                        ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                        : 'border-emerald-200 text-emerald-700 hover:bg-emerald-50'
-                    }
-                  >
-                    {selectedId === p.id ? (
-                      <>
-                        <Check className="h-3.5 w-3.5" /> Terpilih
-                      </>
-                    ) : (
-                      'Pilih'
-                    )}
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    )
-  }
-
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-      {list.map((p, i) => {
-        const isSel = selectedId === p.id
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      {denoms.map((denom) => {
+        const isSelected = denom.id === selectedId
         return (
           <button
-            key={p.id}
-            type="button"
-            onClick={() => onSelect(p)}
+            key={denom.id}
+            onClick={() => onSelect(denom)}
             className={cn(
-              'ap-animate-in group relative flex flex-col overflow-hidden rounded-2xl border bg-white text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-900/5',
-              isSel
-                ? 'border-emerald-500 ring-2 ring-emerald-500/30'
-                : 'border-slate-200 hover:border-emerald-300',
+              'relative flex flex-col items-start gap-1 rounded-2xl border-2 p-4 text-left transition-all hover:-translate-y-0.5',
+              isSelected
+                ? 'border-emerald-500 bg-emerald-50 shadow-md ring-2 ring-emerald-500/20'
+                : 'border-slate-200 bg-white hover:border-emerald-300 hover:shadow-md',
             )}
-            style={{ animationDelay: `${Math.min(i, 8) * 35}ms` }}
-            aria-pressed={isSel}
           >
-            <div
-              className={cn(
-                'relative flex aspect-[5/3] items-center justify-center bg-gradient-to-br',
-                p.gradient,
-              )}
-            >
-              <span className="text-2xl font-extrabold tracking-tight text-white drop-shadow-sm md:text-3xl">
-                {p.brand}
+            {isSelected && (
+              <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white">
+                <Check className="h-3 w-3" />
               </span>
-              <Badge
-                variant="outline"
-                className="absolute left-2 top-2 border-white/40 bg-black/20 text-[10px] font-semibold text-white backdrop-blur"
-              >
-                {p.category}
-              </Badge>
-              {isSel && (
-                <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-emerald-600 shadow-sm">
-                  <Check className="h-3.5 w-3.5" strokeWidth={3} />
-                </span>
-              )}
-            </div>
-            <div className="flex flex-1 flex-col p-3">
-              <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-slate-800">
-                {p.name}
-              </h3>
-              <p className="font-mono-receipt mt-1 text-[10px] uppercase tracking-wide text-slate-400">
-                {p.sku}
-              </p>
-              <div className="mt-auto pt-2">
-                <p className="font-bold text-emerald-700">
-                  {formatRupiah(p.price)}
-                </p>
-              </div>
-            </div>
+            )}
+            <span className="text-sm font-bold leading-tight text-slate-900">
+              {denom.label}
+            </span>
+            <span className="text-lg font-extrabold text-emerald-700">
+              {formatRupiah(denom.price)}
+            </span>
           </button>
         )
       })}
@@ -673,8 +556,11 @@ function Catalog({
 
 function CheckoutPanel({
   selected,
+  category,
   targetId,
+  setTargetId,
   zoneId,
+  setZoneId,
   targetValid,
   needsZone,
   payment,
@@ -684,8 +570,11 @@ function CheckoutPanel({
   onPay,
 }: {
   selected: SelectedProduct | null
+  category: Category
   targetId: string
+  setTargetId: (v: string) => void
   zoneId: string
+  setZoneId: (v: string) => void
   targetValid: boolean
   needsZone: boolean
   payment: PaymentMethod | null
@@ -694,258 +583,155 @@ function CheckoutPanel({
   paying: boolean
   onPay: () => void
 }) {
-  if (!selected) {
-    return (
-      <div
-        id="checkout-panel"
-        className="mt-8 flex flex-col items-center rounded-3xl border border-dashed border-slate-200 bg-white/60 px-6 py-12 text-center"
-      >
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
-          <ShoppingCart className="h-6 w-6" />
-        </div>
-        <h3 className="mt-4 text-base font-bold text-slate-700">
-          Belum ada produk dipilih
-        </h3>
-        <p className="mt-1 max-w-sm text-sm text-slate-500">
-          Pilih produk pada katalog di atas. Detail pembayaran akan muncul di sini.
-        </p>
-      </div>
-    )
-  }
+  if (!selected) return null
 
-  const fee = payment ? Math.round(payment.fee * selected.price) : 0
-  const total = selected.price + fee
+  const fee = payment ? (payment.fee < 1 ? selected.denom.price * payment.fee : payment.fee) : 0
+  const total = selected.denom.price + fee
 
   return (
     <div
       id="checkout-panel"
-      className="mt-8 overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-xl shadow-emerald-900/5"
+      className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-emerald-900/5 md:p-8"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-amber-50/60 px-5 py-4">
-        <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white">
-            <ShoppingCart className="h-4 w-4" />
-          </span>
-          <div>
-            <h2 className="text-sm font-bold text-slate-900">Ringkasan Pesanan</h2>
-            <p className="text-xs text-slate-500">Selesaikan dalam 3 langkah</p>
-          </div>
-        </div>
-        <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
-          {selected.kind === 'pulsa' ? 'Pulsa/Data' : 'Game'}
-        </Badge>
+      <div className="mb-6 flex items-center gap-2">
+        <ShoppingCart className="h-5 w-5 text-emerald-600" />
+        <h3 className="text-lg font-bold text-slate-900">Detail Pesanan</h3>
       </div>
 
-      <div className="grid gap-6 p-5 md:grid-cols-[1.4fr_1fr] md:p-6">
-        {/* Left: details */}
+      <div className="grid gap-6 md:grid-cols-[1.3fr_1fr]">
+        {/* Left: order summary + target input */}
         <div className="space-y-5">
-          <Step
-            n={1}
-            title="Produk Terpilih"
-            done
-            className="bg-emerald-50/40"
-          >
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3">
+          <div className="rounded-2xl bg-slate-50 p-4">
+            <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <span
                   className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br text-[11px] font-bold text-white',
-                    selected.gradient,
+                    'flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br text-2xl',
+                    selected.brand.gradient,
                   )}
                 >
-                  {selected.brand}
+                  {selected.brand.emoji}
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-slate-800">
-                    {selected.name}
+                  <p className="text-xs font-medium text-slate-500">
+                    {selected.brand.name}
                   </p>
-                  <p className="font-mono-receipt text-[10px] uppercase tracking-wide text-slate-400">
-                    SKU {selected.sku}
-                  </p>
+                  <p className="font-bold text-slate-900">{selected.denom.name}</p>
                 </div>
               </div>
-              <span className="font-bold text-emerald-700">
-                {formatRupiah(selected.price)}
-              </span>
+              <p className="text-right text-lg font-extrabold text-emerald-700">
+                {formatRupiah(selected.denom.price)}
+              </p>
             </div>
-          </Step>
+          </div>
 
-          <Step
-            n={2}
-            title="ID Tujuan"
-            done={targetValid}
-            className={targetValid ? 'bg-emerald-50/40' : ''}
-          >
-            <div className="rounded-xl border border-slate-200 bg-white p-3 text-sm">
-              {selected.kind === 'pulsa' ? (
-                <div className="flex items-center gap-2">
-                  <Smartphone className="h-4 w-4 text-slate-400" />
-                  <span className="text-slate-700">No. HP:</span>
-                  <span className="font-mono-receipt font-semibold text-slate-900">
-                    {targetId || '—'}
-                  </span>
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <Gamepad2 className="h-4 w-4 text-slate-400" />
-                    <span className="text-slate-700">User ID:</span>
-                    <span className="font-mono-receipt font-semibold text-slate-900">
-                      {targetId || '—'}
-                    </span>
-                  </div>
-                  {needsZone && (
-                    <div className="flex items-center gap-2 pl-6">
-                      <span className="text-slate-700">Zone:</span>
-                      <span className="font-mono-receipt font-semibold text-slate-900">
-                        {zoneId || '—'}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
-              {!targetValid && (
-                <p className="mt-2 text-xs text-amber-600">
-                  Lengkapi ID tujuan di atas untuk melanjutkan.
-                </p>
-              )}
+          <div className="space-y-3">
+            <div>
+              <Label htmlFor="target" className="text-sm font-semibold text-slate-700">
+                {category.inputLabel}
+              </Label>
+              <Input
+                id="target"
+                value={targetId}
+                onChange={(e) => setTargetId(e.target.value)}
+                placeholder={category.inputPlaceholder}
+                inputMode="numeric"
+                className="mt-1.5 h-12 rounded-xl"
+              />
             </div>
-          </Step>
+            {needsZone && (
+              <div>
+                <Label htmlFor="zone" className="text-sm font-semibold text-slate-700">
+                  Zone ID (Server)
+                </Label>
+                <Input
+                  id="zone"
+                  value={zoneId}
+                  onChange={(e) => setZoneId(e.target.value)}
+                  placeholder="Contoh: 1234"
+                  inputMode="numeric"
+                  className="mt-1.5 h-12 rounded-xl"
+                />
+              </div>
+            )}
+          </div>
+        </div>
 
-          <Step
-            n={3}
-            title="Metode Pembayaran"
-            done={!!payment}
-            className={payment ? 'bg-emerald-50/40' : ''}
-          >
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {paymentMethods.map((m) => {
-                const Icon = PAYMENT_ICON[m.icon]
-                const isSel = payment?.id === m.id
+        {/* Right: payment + total */}
+        <div className="space-y-4">
+          <div>
+            <p className="mb-2 text-sm font-semibold text-slate-700">Metode Pembayaran</p>
+            <div className="space-y-2">
+              {paymentMethods.map((pm) => {
+                const Icon = PAYMENT_ICON[pm.icon]
+                const isPicked = payment?.id === pm.id
                 return (
                   <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => setPayment(m)}
+                    key={pm.id}
+                    onClick={() => setPayment(pm)}
                     className={cn(
-                      'flex flex-col items-start gap-1 rounded-xl border p-3 text-left transition-all',
-                      isSel
-                        ? 'border-emerald-500 bg-emerald-50/60 ring-2 ring-emerald-500/20'
-                        : 'border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/30',
+                      'flex w-full items-center gap-3 rounded-xl border-2 p-3 text-left transition-all',
+                      isPicked
+                        ? 'border-emerald-500 bg-emerald-50'
+                        : 'border-slate-200 hover:border-emerald-300',
                     )}
                   >
-                    <span
-                      className={cn(
-                        'flex h-7 w-7 items-center justify-center rounded-lg',
-                        isSel
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-slate-100 text-slate-500',
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100">
+                      <Icon className="h-4 w-4 text-slate-600" />
                     </span>
-                    <span className="text-xs font-bold text-slate-800">{m.name}</span>
-                    <span className="text-[10px] leading-tight text-slate-500">
-                      {m.desc}
-                    </span>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-slate-900">{pm.name}</p>
+                      <p className="text-xs text-slate-500">{pm.desc}</p>
+                    </div>
+                    {isPicked && <Check className="h-4 w-4 text-emerald-600" />}
                   </button>
                 )
               })}
             </div>
-          </Step>
-        </div>
+          </div>
 
-        {/* Right: total + pay */}
-        <div className="flex flex-col rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-            Total Pembayaran
-          </h3>
-          <dl className="mt-3 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-slate-500">{selected.name}</dt>
-              <dd className="font-mono-receipt font-semibold text-slate-800">
-                {formatRupiah(selected.price)}
-              </dd>
+          <div className="rounded-2xl border border-slate-200 p-4">
+            <div className="flex justify-between text-sm text-slate-600">
+              <span>Harga</span>
+              <span>{formatRupiah(selected.denom.price)}</span>
             </div>
-            <div className="flex justify-between">
-              <dt className="text-slate-500">
-                Biaya {payment ? `(${payment.name})` : ''}
-              </dt>
-              <dd className="font-mono-receipt text-slate-600">
-                {payment ? formatRupiah(fee) : '—'}
-              </dd>
+            {payment && fee > 0 && (
+              <div className="mt-1 flex justify-between text-sm text-slate-600">
+                <span>Biaya admin ({payment.name})</span>
+                <span>{formatRupiah(fee)}</span>
+              </div>
+            )}
+            <div className="mt-2 flex justify-between border-t border-slate-200 pt-2 text-base font-bold text-slate-900">
+              <span>Total</span>
+              <span className="text-emerald-700">{formatRupiah(total)}</span>
             </div>
-            <div className="my-2 border-t border-dashed border-slate-300" />
-            <div className="flex items-baseline justify-between">
-              <dt className="text-sm font-bold text-slate-700">Total</dt>
-              <dd className="font-mono-receipt text-2xl font-extrabold text-emerald-700">
-                {formatRupiah(total)}
-              </dd>
-            </div>
-          </dl>
+          </div>
 
           <Button
-            type="button"
-            disabled={!canPay}
             onClick={onPay}
-            className="mt-4 h-12 w-full gap-2 rounded-xl bg-emerald-600 text-base font-bold text-white shadow-md shadow-emerald-600/30 transition-all hover:bg-emerald-700 hover:shadow-lg disabled:bg-slate-300 disabled:shadow-none"
+            disabled={!canPay || paying}
+            className="h-12 w-full rounded-xl bg-emerald-600 text-base font-bold hover:bg-emerald-700"
           >
             {paying ? (
               <>
-                <Loader2 className="h-5 w-5 animate-spin" /> Memproses…
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Memproses…
               </>
             ) : (
               <>
-                <Zap className="h-5 w-5 fill-white" /> Bayar Sekarang
-                <ArrowRight className="h-4 w-4" />
+                Bayar Sekarang
+                <ArrowRight className="ml-2 h-4 w-4" />
               </>
             )}
           </Button>
-
-          <p className="mt-3 text-center text-[11px] leading-tight text-slate-400">
-            Dengan melanjutkan, Anda menyetujui ketentuan transaksi Adnanpay.
-            Pembayaran diproses oleh Midtrans.
-          </p>
+          {!targetValid && (
+            <p className="text-center text-xs text-slate-400">
+              Masukkan {category.inputLabel.toLowerCase()} yang valid
+              {needsZone ? ' & Zone ID' : ''}
+            </p>
+          )}
         </div>
       </div>
-    </div>
-  )
-}
-
-function Step({
-  n,
-  title,
-  done,
-  className,
-  children,
-}: {
-  n: number
-  title: string
-  done?: boolean
-  className?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div
-      className={cn(
-        'rounded-2xl border border-transparent p-3 transition-colors',
-        className,
-      )}
-    >
-      <div className="mb-2 flex items-center gap-2">
-        <span
-          className={cn(
-            'flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold',
-            done
-              ? 'bg-emerald-600 text-white'
-              : 'bg-slate-200 text-slate-600',
-          )}
-        >
-          {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : n}
-        </span>
-        <h3 className="text-sm font-bold text-slate-800">{title}</h3>
-      </div>
-      {children}
     </div>
   )
 }

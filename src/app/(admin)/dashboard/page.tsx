@@ -1,10 +1,12 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import {
   Wallet,
   ShoppingBag,
   TrendingUp,
   ArrowUpRight,
+  Loader2,
 } from 'lucide-react'
 
 import { AdminPageHeader } from '@/components/features/admin-page-header'
@@ -15,10 +17,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { cn, formatRupiah } from '@/lib/utils'
-import {
-  dashboardMetrics,
-  transactions7Days,
-} from '@/components/features/admin-mock-data'
+import { getDashboardMetrics } from '@/actions/dashboard'
+import type { DashboardMetrics } from '@/actions/dashboard'
 
 interface MetricCardProps {
   label: string
@@ -78,10 +78,55 @@ function MetricCard({
 }
 
 export default function AdminDashboardPage() {
-  const { digiflazzBalance, transactionsToday, grossRevenue } = dashboardMetrics
+  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const maxCount = Math.max(...transactions7Days.map((d) => d.count), 1)
-  const total7Days = transactions7Days.reduce((s, d) => s + d.count, 0)
+  useEffect(() => {
+    async function load() {
+      const result = await getDashboardMetrics()
+      if (result.success && result.data) {
+        setMetrics(result.data)
+      } else {
+        setError(result.error || 'Failed to load')
+      }
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  if (loading) {
+    return (
+      <div>
+        <AdminPageHeader
+          title="Dashboard"
+          description="Ringkasan operasional Adnanpay hari ini."
+          icon={TrendingUp}
+        />
+        <div className="flex h-64 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !metrics) {
+    return (
+      <div>
+        <AdminPageHeader
+          title="Dashboard"
+          description="Ringkasan operasional Adnanpay hari ini."
+          icon={TrendingUp}
+        />
+        <div className="flex h-64 items-center justify-center text-muted-foreground">
+          {error || 'Unable to load metrics'}
+        </div>
+      </div>
+    )
+  }
+
+  const maxCount = Math.max(...metrics.transactions7Days.map((d) => d.count), 1)
+  const total7Days = metrics.transactions7Days.reduce((s, d) => s + d.count, 0)
 
   return (
     <div>
@@ -97,7 +142,7 @@ export default function AdminDashboardPage() {
       >
         <MetricCard
           label="Saldo Digiflazz"
-          value={formatRupiah(digiflazzBalance)}
+          value={formatRupiah(metrics.digiflazzBalance)}
           hint="Saldo deposit gateway"
           icon={Wallet}
           trend="3,2%"
@@ -105,7 +150,7 @@ export default function AdminDashboardPage() {
         />
         <MetricCard
           label="Transaksi Hari Ini"
-          value={String(transactionsToday)}
+          value={String(metrics.transactionsToday)}
           hint="vs kemarin 41"
           icon={ShoppingBag}
           trend="14,6%"
@@ -113,7 +158,7 @@ export default function AdminDashboardPage() {
         />
         <MetricCard
           label="Pendapatan Kotor"
-          value={formatRupiah(grossRevenue)}
+          value={formatRupiah(metrics.grossRevenue)}
           hint="Gross revenue hari ini"
           icon={TrendingUp}
           trend="8,1%"
@@ -142,7 +187,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex h-56 items-end justify-between gap-3 sm:gap-4">
-              {transactions7Days.map((entry) => {
+              {metrics.transactions7Days.map((entry) => {
                 const heightPct = Math.max(
                   (entry.count / maxCount) * 100,
                   4,
@@ -182,25 +227,24 @@ export default function AdminDashboardPage() {
             <div className="flex items-start gap-3 rounded-lg bg-emerald-500/5 p-3">
               <span className="mt-0.5 inline-block h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
               <p className="text-muted-foreground">
-                Sinkron Digiflazz terakhir 12 menit lalu —{' '}
-                <span className="font-medium text-foreground">14 SKU aktif</span>.
+                Sistem berjalan normal —{' '}
+                <span className="font-medium text-foreground"> dashboard aktif</span>.
               </p>
             </div>
             <div className="flex items-start gap-3 rounded-lg bg-amber-500/5 p-3">
               <span className="mt-0.5 inline-block h-2 w-2 shrink-0 rounded-full bg-amber-500" />
               <p className="text-muted-foreground">
-                2 transaksi sedang{' '}
+                Sinkronisasi produk via{' '}
                 <span className="font-medium text-foreground">
-                  menunggu fulfillment
+                  Digiflazz API
                 </span>{' '}
-                Digiflazz.
+                tersedia.
               </p>
             </div>
             <div className="flex items-start gap-3 rounded-lg bg-primary/5 p-3">
               <span className="mt-0.5 inline-block h-2 w-2 shrink-0 rounded-full bg-primary" />
               <p className="text-muted-foreground">
-                Saldo diisi ulang otomatis saat di bawah{' '}
-                <span className="font-medium text-foreground">Rp 500.000</span>.
+                {metrics.transactionsToday} transaksi diproses hari ini.
               </p>
             </div>
           </CardContent>

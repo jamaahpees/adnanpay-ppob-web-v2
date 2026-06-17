@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS products (
   id INT AUTO_INCREMENT PRIMARY KEY,
   sku VARCHAR(100) UNIQUE NOT NULL,
   name VARCHAR(200) NOT NULL,
-  category ENUM('Pulsa','Data','Game') NOT NULL,
+  category ENUM('Pulsa','Data','Game','E-Money','PLN','Streaming') NOT NULL,
   base_price INT NOT NULL,
   buyer_sku_code VARCHAR(100),
   needs_zone BOOLEAN DEFAULT FALSE,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE TABLE IF NOT EXISTS pricing_rules (
   id INT AUTO_INCREMENT PRIMARY KEY,
   product_id INT NULL,
-  category ENUM('Pulsa','Data','Game') NULL,
+  category ENUM('Pulsa','Data','Game','E-Money','PLN','Streaming') NULL,
   margin_type ENUM('fixed','percentage') NOT NULL,
   margin_value DECIMAL(10,2) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

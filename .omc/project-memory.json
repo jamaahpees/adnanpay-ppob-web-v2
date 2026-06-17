@@ -9,8 +9,8 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "timeout 90 npm run build 2>&1 | tail -25",
-    "testCommand": "cat /home/hanz/projects/Adnanpay.com/tsconfig.json 2>/dev/null; echo \"---NEXTCONFIG---\"; cat /home/hanz/projects/Adnanpay.com/next.config.* 2>/dev/null | head -40; echo \"---GITLOG---\"; git -C /home/hanz/projects/Adnanpay.com log --oneline -8 2>/dev/null; echo \"---ACTIONS DIR---\"; ls -la /home/hanz/projects/Adnanpay.com/src/actions/ 2>/dev/null; echo \"---VITEST/JOSE---\"; grep -rE \"vitest|jose|bcrypt|papaparse\" /home/hanz/projects/Adnanpay.com/package.json",
+    "buildCommand": "echo \"=== Verify build still works ===\" \nnpm run build 2>&1 | tail -3\necho \"\"\necho \"=== Git status ===\" \ngit status --short | grep -v \"^ M \\.omc\" | head -20",
+    "testCommand": "echo \"=== REMOVE duplicate/new files we don't need ===\" && rm -v src/lib/category.ts src/lib/constants.ts src/lib/env.ts src/lib/invoice.ts src/lib/password.ts src/lib/status.ts src/lib/validators.ts src/lib/presentation.ts vitest.config.ts 2>/dev/null; rm -v db/schema.sql db/seed.sql 2>/dev/null; echo \"=== DONE CLEANUP ===\" && git status --short | grep -vE '\\.omc'",
     "lintCommand": null,
     "devCommand": null,
     "scripts": {}
@@ -42,15 +42,15 @@
   },
   "hotPaths": [
     {
-      "path": "src/components/features/public-homepage.tsx",
-      "accessCount": 12,
-      "lastAccessed": 1781700925307,
+      "path": "src/app/(admin)/produk/page.tsx",
+      "accessCount": 35,
+      "lastAccessed": 1781709569832,
       "type": "file"
     },
     {
-      "path": "src/app/(admin)/produk/page.tsx",
-      "accessCount": 10,
-      "lastAccessed": 1781700687991,
+      "path": "src/components/features/public-homepage.tsx",
+      "accessCount": 21,
+      "lastAccessed": 1781708510312,
       "type": "file"
     },
     {
@@ -61,8 +61,8 @@
     },
     {
       "path": "src/app/(public)/invoice/[code]/page.tsx",
-      "accessCount": 9,
-      "lastAccessed": 1781701126788,
+      "accessCount": 10,
+      "lastAccessed": 1781707029715,
       "type": "file"
     },
     {
@@ -72,15 +72,39 @@
       "type": "file"
     },
     {
+      "path": "src/components/features/public-mock-data.ts",
+      "accessCount": 8,
+      "lastAccessed": 1781708198549,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(public)/page.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1781708709290,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/dashboard/page.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1781708829028,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/transaksi/page.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1781708970740,
+      "type": "file"
+    },
+    {
       "path": "src/app/(admin)/login/page.tsx",
       "accessCount": 7,
       "lastAccessed": 1781700569697,
       "type": "file"
     },
     {
-      "path": "src/app/(admin)/transaksi/page.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1781698603654,
+      "path": "src/components/features/public-lacak-form.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1781707029731,
       "type": "file"
     },
     {
@@ -90,9 +114,9 @@
       "type": "file"
     },
     {
-      "path": "src/components/features/public-lacak-form.tsx",
+      "path": "db/migrations/001_init.sql",
       "accessCount": 6,
-      "lastAccessed": 1781701131458,
+      "lastAccessed": 1781712686629,
       "type": "file"
     },
     {
@@ -102,21 +126,9 @@
       "type": "file"
     },
     {
-      "path": "src/app/(admin)/dashboard/page.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1781698603465,
-      "type": "file"
-    },
-    {
       "path": "src/lib/db.ts",
       "accessCount": 5,
       "lastAccessed": 1781699224859,
-      "type": "file"
-    },
-    {
-      "path": "src/components/features/public-mock-data.ts",
-      "accessCount": 5,
-      "lastAccessed": 1781699273477,
       "type": "file"
     },
     {
@@ -162,12 +174,6 @@
       "type": "file"
     },
     {
-      "path": "src/app/(public)/page.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1781697170274,
-      "type": "file"
-    },
-    {
       "path": "next.config.mjs",
       "accessCount": 3,
       "lastAccessed": 1781697240787,
@@ -189,6 +195,12 @@
       "path": "tsconfig.json",
       "accessCount": 3,
       "lastAccessed": 1781699372925,
+      "type": "file"
+    },
+    {
+      "path": ".env.example",
+      "accessCount": 3,
+      "lastAccessed": 1781704818050,
       "type": "file"
     },
     {
@@ -234,9 +246,9 @@
       "type": "file"
     },
     {
-      "path": ".env.example",
+      "path": "src/lib/pricing.ts",
       "accessCount": 2,
-      "lastAccessed": 1781701816456,
+      "lastAccessed": 1781704541574,
       "type": "file"
     },
     {
@@ -315,18 +327,6 @@
       "path": "src/components/features/admin-page-header.tsx",
       "accessCount": 1,
       "lastAccessed": 1781697563150,
-      "type": "file"
-    },
-    {
-      "path": "db/migrations/001_init.sql",
-      "accessCount": 1,
-      "lastAccessed": 1781699518634,
-      "type": "file"
-    },
-    {
-      "path": "src/lib/pricing.ts",
-      "accessCount": 1,
-      "lastAccessed": 1781699526654,
       "type": "file"
     },
     {
