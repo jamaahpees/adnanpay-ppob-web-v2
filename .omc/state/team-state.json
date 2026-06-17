@@ -1,18 +1,9 @@
 {
-  "active": true,
-  "current_phase": "team-plan",
-  "team_name": "adnanpay-frontend",
-  "agent_count": 4,
-  "agent_types": "executor",
-  "task": "Implement Adnanpay PPOB Web v2 frontend from plan",
-  "fix_loop_count": 0,
-  "max_fix_loops": 3,
-  "linked_ralph": false,
-  "stage_history": "team-plan:2026-06-17T10:05:45Z",
+  "current_phase": "team-exec",
   "_meta": {
     "mode": "team",
     "sessionId": null,
-    "updatedAt": "2026-06-17T10:06:13.296Z",
+    "updatedAt": "2026-06-17T10:16:20.207Z",
     "updatedBy": "state_write_tool"
   }
 }

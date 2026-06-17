@@ -1,0 +1,316 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1781692127781,
+  "projectRoot": "/home/hanz/projects/Adnanpay.com",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build 2>&1 | tail -60",
+    "testCommand": "echo \"=== .gitignore ===\" && cat .gitignore && echo \"\" && echo \"=== existing api/actions ===\" && find src -type d \\( -name \"actions\" -o -name \"api\" \\) 2>/dev/null; echo \"(none if empty above)\" && echo \"=== src/lib ===\" && ls -la src/lib/ && echo \"=== any test runner? ===\" && grep -E '\"(test|vitest|jest)\"' package.json || echo \"no test runner configured\"",
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "plan": {
+      "path": "plan",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1781692127775,
+      "keyFiles": [
+        "backend.md",
+        "front_end_plan.md"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "package.json",
+      "accessCount": 7,
+      "lastAccessed": 1781697240525,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(public)/invoice/[code]/page.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1781697835003,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/produk/page.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1781698070611,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/transaksi/page.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1781697988816,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/pricing/page.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1781698072353,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/public-homepage.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1781698127436,
+      "type": "file"
+    },
+    {
+      "path": "src/app/globals.css",
+      "accessCount": 4,
+      "lastAccessed": 1781696507225,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/utils.ts",
+      "accessCount": 4,
+      "lastAccessed": 1781697504281,
+      "type": "file"
+    },
+    {
+      "path": "plan/front_end_plan.md",
+      "accessCount": 4,
+      "lastAccessed": 1781697504317,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/dashboard/page.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1781697720023,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/login/page.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1781697833350,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(public)/lacak/page.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1781697833642,
+      "type": "file"
+    },
+    {
+      "path": "src/components/layout/Navbar.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1781697836473,
+      "type": "file"
+    },
+    {
+      "path": "src/components/layout/Footer.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1781697836564,
+      "type": "file"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1781696121318,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(public)/page.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1781697170274,
+      "type": "file"
+    },
+    {
+      "path": "next.config.mjs",
+      "accessCount": 3,
+      "lastAccessed": 1781697240787,
+      "type": "file"
+    },
+    {
+      "path": "src/components/layout/AdminSidebar.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1781697835259,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/public-mock-data.ts",
+      "accessCount": 3,
+      "lastAccessed": 1781697845360,
+      "type": "file"
+    },
+    {
+      "path": "next.config.ts",
+      "accessCount": 2,
+      "lastAccessed": 1781694502084,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/card.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1781696178549,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/form.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1781696178637,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/table.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1781696178649,
+      "type": "file"
+    },
+    {
+      "path": "tsconfig.json",
+      "accessCount": 2,
+      "lastAccessed": 1781697241048,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/db.ts",
+      "accessCount": 2,
+      "lastAccessed": 1781697321082,
+      "type": "file"
+    },
+    {
+      "path": "src/middleware.ts",
+      "accessCount": 2,
+      "lastAccessed": 1781697321140,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/admin-mock-data.ts",
+      "accessCount": 2,
+      "lastAccessed": 1781697321820,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/public-lacak-form.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1781697833880,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/public-status-timeline.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1781697834237,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/layout.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1781697835128,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/public-print-button.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1781697835170,
+      "type": "file"
+    },
+    {
+      "path": "tailwind.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1781693623582,
+      "type": "file"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1781693623843,
+      "type": "file"
+    },
+    {
+      "path": "components.json",
+      "accessCount": 1,
+      "lastAccessed": 1781694401626,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/button.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781694407926,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/input.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781694410905,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/badge.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781694421340,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/label.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781694423495,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/dialog.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781694446599,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/tabs.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781694451291,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/switch.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781694454552,
+      "type": "file"
+    },
+    {
+      "path": "src/components/ui/sonner.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781694473233,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(public)/layout.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781696457284,
+      "type": "file"
+    },
+    {
+      "path": "plan/backend.md",
+      "accessCount": 1,
+      "lastAccessed": 1781697240397,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/admin-page-header.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1781697563150,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
