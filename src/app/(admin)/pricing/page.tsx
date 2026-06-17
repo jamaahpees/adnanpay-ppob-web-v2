@@ -23,6 +23,7 @@ import {
   type MarginType,
   type PricingRule,
 } from '@/components/features/admin-mock-data'
+import { savePricingRulesAction } from '@/actions/pricing'
 
 const NUMERIC_MONO = {
   fontFamily: 'var(--font-mono-jb), ui-monospace, monospace',
@@ -82,10 +83,33 @@ export default function AdminPricingPage() {
     }
   }
 
-  function saveAll() {
-    toast.success('Margin disimpan', {
-      description: `${rules.length} aturan pricing diterapkan ke katalog publik.`,
-    })
+  const [saving, setSaving] = useState(false)
+
+  async function saveAll() {
+    setSaving(true)
+    try {
+      const payload = rules.map((r) => ({
+        category: r.scope === 'category' ? (r.target as 'Pulsa' | 'Data' | 'Game') : null,
+        productId: null,
+        marginType: r.marginType,
+        marginValue: r.marginValue,
+      }))
+      const res = await savePricingRulesAction(payload)
+      if (res.success) {
+        toast.success('Margin disimpan', {
+          description: `${rules.length} aturan pricing diterapkan ke katalog publik.`,
+        })
+      } else {
+        toast.error('Gagal menyimpan', {
+          description: res.error ?? 'Server error',
+        })
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error('Gagal menyimpan', { description: 'Terjadi kesalahan tak terduga' })
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -100,9 +124,9 @@ export default function AdminPricingPage() {
               <RotateCcw className="h-4 w-4" />
               Reset
             </Button>
-            <Button onClick={saveAll}>
+            <Button onClick={saveAll} disabled={saving}>
               <Calculator className="h-4 w-4" />
-              Simpan Perubahan
+              {saving ? 'Menyimpan…' : 'Simpan Perubahan'}
             </Button>
           </>
         }

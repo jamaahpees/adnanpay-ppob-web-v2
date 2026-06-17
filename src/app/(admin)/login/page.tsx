@@ -25,10 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-
-// Mock auth — real JWT verification lands in Task #4.
-const ADMIN_TOKEN_COOKIE = 'admin-token'
-const ONE_DAY_SECONDS = 60 * 60 * 24
+import { loginAction } from '@/actions/auth'
 
 const loginSchema = z.object({
   username: z
@@ -49,18 +46,31 @@ export default function AdminLoginPage() {
     defaultValues: { username: '', password: '' },
   })
 
-  function onSubmit(_values: LoginValues) { // eslint-disable-line @typescript-eslint/no-unused-vars
+  async function onSubmit(values: LoginValues) {
     setSubmitting(true)
-    // Mock: any username/pass matching schema is accepted for now.
-    // Task #4 replaces this with server-side verify + HttpOnly cookie.
-    document.cookie = `${ADMIN_TOKEN_COOKIE}=mock-admin-token; path=/; max-age=${ONE_DAY_SECONDS}; SameSite=Lax`
-    toast.success('Login berhasil', {
-      description: 'Mengarahkan ke dashboard…',
-    })
-    setTimeout(() => {
-      router.push('/dashboard')
+    try {
+      const res = await loginAction(values)
+      if (!res.success || !res.data) {
+        toast.error('Login gagal', {
+          description: res.error ?? 'Kredensial tidak valid',
+        })
+        return
+      }
+      toast.success('Login berhasil', {
+        description:
+          res.error /* demo-mode warning string */ ??
+          'Mengarahkan ke dashboard…',
+      })
+      router.push(res.data.redirectTo)
       router.refresh()
-    }, 400)
+    } catch (err) {
+      console.error(err)
+      toast.error('Login gagal', {
+        description: 'Terjadi kesalahan tak terduga',
+      })
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (

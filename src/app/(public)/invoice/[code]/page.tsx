@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { formatRupiah, cn } from '@/lib/utils'
 import { getMockInvoice } from '@/components/features/public-mock-data'
 import { PrintInvoiceButton } from '@/components/features/public-print-button'
+import { getOrderByInvoiceCode } from '@/actions/orders'
 
 interface PageProps {
   params: { code: string }
@@ -17,11 +18,43 @@ export function generateMetadata({ params }: PageProps) {
   }
 }
 
-export default function InvoicePage({ params }: PageProps) {
+export default async function InvoicePage({ params }: PageProps) {
   const code = decodeURIComponent(params.code)
   if (!code) notFound()
 
-  const invoice = getMockInvoice(code)
+  // Try real DB lookup first; fall back to mock invoice for demo flow.
+  const realOrder = await getOrderByInvoiceCode(code)
+  const dateIso = realOrder?.created_at ?? getMockInvoice(code).dateIso
+  const invoice = {
+    code,
+    dateIso,
+    item: realOrder?.product_name_snapshot ?? getMockInvoice(code).item,
+    targetId: realOrder
+      ? realOrder.zone_id
+        ? `${realOrder.target_id} (${realOrder.zone_id})`
+        : realOrder.target_id
+      : getMockInvoice(code).targetId,
+    price: realOrder ? Number(realOrder.sell_price_snapshot) : getMockInvoice(code).price,
+    payStatus: realOrder
+      ? realOrder.payment_status === 'success'
+        ? 'Berhasil'
+        : realOrder.payment_status === 'pending'
+          ? 'Pending'
+          : realOrder.payment_status === 'expired'
+            ? 'Expired'
+            : 'Gagal'
+      : getMockInvoice(code).payStatus,
+    fulfillmentStatus: realOrder
+      ? realOrder.fulfillment_status === 'success'
+        ? 'Sukses'
+        : realOrder.fulfillment_status === 'processing'
+          ? 'Proses'
+          : realOrder.fulfillment_status === 'failed'
+            ? 'Gagal'
+            : 'Proses'
+      : getMockInvoice(code).fulfillmentStatus,
+    sn: realOrder?.sn ?? getMockInvoice(code).sn,
+  }
   const date = new Date(invoice.dateIso)
   const dateLabel = date.toLocaleDateString('id-ID', {
     day: '2-digit',

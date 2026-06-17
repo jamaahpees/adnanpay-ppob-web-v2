@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"rm next.config.ts && echo \\\"deleted next.config.ts\\\"\",\"description\":\"Remove unsupported next.config.ts\"}",
-  "error": "Exit code 1\nrm: cannot remove 'next.config.ts': No such file or directory",
-  "timestamp": "2026-06-17T11:14:17.980Z",
+  "tool_input_preview": "{\"command\":\"PORT=4567 npm run start > /tmp/adnan-server2.log 2>&1 &\\necho \\\"pid=$!\\\"\\nfor i in $(seq 1 40); do\\n  if grep -q \\\"Ready in\\\\|started server\\\\|Local:\\\" /tmp/adnan-server2.log 2>/dev/null; ...",
+  "error": "Exit code 144\npid=152866\n=== bad signature midtrans (expect 401) ===\n401\n{\"error\":\"Invalid signature\"}=== bad signature digiflazz (expect 401) ===\n401\n{\"error\":\"Invalid signature\"}=== malformed midtrans (expect 400) ===\n400\n{\"error\":\"Invalid payload\"}=== GET webhook (expect 405) ===\n405\n=== homepage (expect 200) ===\n200",
+  "timestamp": "2026-06-17T13:17:24.977Z",
   "retry_count": 1
 }

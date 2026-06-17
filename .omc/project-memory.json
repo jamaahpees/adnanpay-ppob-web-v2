@@ -9,8 +9,8 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "npm run build 2>&1 | tail -60",
-    "testCommand": "echo \"=== .gitignore ===\" && cat .gitignore && echo \"\" && echo \"=== existing api/actions ===\" && find src -type d \\( -name \"actions\" -o -name \"api\" \\) 2>/dev/null; echo \"(none if empty above)\" && echo \"=== src/lib ===\" && ls -la src/lib/ && echo \"=== any test runner? ===\" && grep -E '\"(test|vitest|jest)\"' package.json || echo \"no test runner configured\"",
+    "buildCommand": "timeout 90 npm run build 2>&1 | tail -25",
+    "testCommand": "cat /home/hanz/projects/Adnanpay.com/tsconfig.json 2>/dev/null; echo \"---NEXTCONFIG---\"; cat /home/hanz/projects/Adnanpay.com/next.config.* 2>/dev/null | head -40; echo \"---GITLOG---\"; git -C /home/hanz/projects/Adnanpay.com log --oneline -8 2>/dev/null; echo \"---ACTIONS DIR---\"; ls -la /home/hanz/projects/Adnanpay.com/src/actions/ 2>/dev/null; echo \"---VITEST/JOSE---\"; grep -rE \"vitest|jose|bcrypt|papaparse\" /home/hanz/projects/Adnanpay.com/package.json",
     "lintCommand": null,
     "devCommand": null,
     "scripts": {}
@@ -42,39 +42,87 @@
   },
   "hotPaths": [
     {
-      "path": "package.json",
-      "accessCount": 7,
-      "lastAccessed": 1781697240525,
-      "type": "file"
-    },
-    {
-      "path": "src/app/(public)/invoice/[code]/page.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1781697835003,
+      "path": "src/components/features/public-homepage.tsx",
+      "accessCount": 12,
+      "lastAccessed": 1781700925307,
       "type": "file"
     },
     {
       "path": "src/app/(admin)/produk/page.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1781698070611,
-      "type": "file"
-    },
-    {
-      "path": "src/app/(admin)/transaksi/page.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1781697988816,
+      "accessCount": 10,
+      "lastAccessed": 1781700687991,
       "type": "file"
     },
     {
       "path": "src/app/(admin)/pricing/page.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1781698072353,
+      "accessCount": 10,
+      "lastAccessed": 1781700804778,
       "type": "file"
     },
     {
-      "path": "src/components/features/public-homepage.tsx",
+      "path": "src/app/(public)/invoice/[code]/page.tsx",
+      "accessCount": 9,
+      "lastAccessed": 1781701126788,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 8,
+      "lastAccessed": 1781699372893,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/login/page.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1781700569697,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/transaksi/page.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1781698603654,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/utils.ts",
+      "accessCount": 6,
+      "lastAccessed": 1781699225080,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/public-lacak-form.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1781701131458,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(public)/lacak/page.tsx",
       "accessCount": 5,
-      "lastAccessed": 1781698127436,
+      "lastAccessed": 1781698576233,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(admin)/dashboard/page.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1781698603465,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/db.ts",
+      "accessCount": 5,
+      "lastAccessed": 1781699224859,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/public-mock-data.ts",
+      "accessCount": 5,
+      "lastAccessed": 1781699273477,
+      "type": "file"
+    },
+    {
+      "path": "src/middleware.ts",
+      "accessCount": 5,
+      "lastAccessed": 1781701622277,
       "type": "file"
     },
     {
@@ -84,33 +132,9 @@
       "type": "file"
     },
     {
-      "path": "src/lib/utils.ts",
-      "accessCount": 4,
-      "lastAccessed": 1781697504281,
-      "type": "file"
-    },
-    {
       "path": "plan/front_end_plan.md",
       "accessCount": 4,
       "lastAccessed": 1781697504317,
-      "type": "file"
-    },
-    {
-      "path": "src/app/(admin)/dashboard/page.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1781697720023,
-      "type": "file"
-    },
-    {
-      "path": "src/app/(admin)/login/page.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1781697833350,
-      "type": "file"
-    },
-    {
-      "path": "src/app/(public)/lacak/page.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1781697833642,
       "type": "file"
     },
     {
@@ -123,6 +147,12 @@
       "path": "src/components/layout/Footer.tsx",
       "accessCount": 4,
       "lastAccessed": 1781697836564,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/admin-mock-data.ts",
+      "accessCount": 4,
+      "lastAccessed": 1781699273679,
       "type": "file"
     },
     {
@@ -150,9 +180,15 @@
       "type": "file"
     },
     {
-      "path": "src/components/features/public-mock-data.ts",
+      "path": "src/components/features/public-status-timeline.tsx",
       "accessCount": 3,
-      "lastAccessed": 1781697845360,
+      "lastAccessed": 1781698604356,
+      "type": "file"
+    },
+    {
+      "path": "tsconfig.json",
+      "accessCount": 3,
+      "lastAccessed": 1781699372925,
       "type": "file"
     },
     {
@@ -180,42 +216,6 @@
       "type": "file"
     },
     {
-      "path": "tsconfig.json",
-      "accessCount": 2,
-      "lastAccessed": 1781697241048,
-      "type": "file"
-    },
-    {
-      "path": "src/lib/db.ts",
-      "accessCount": 2,
-      "lastAccessed": 1781697321082,
-      "type": "file"
-    },
-    {
-      "path": "src/middleware.ts",
-      "accessCount": 2,
-      "lastAccessed": 1781697321140,
-      "type": "file"
-    },
-    {
-      "path": "src/components/features/admin-mock-data.ts",
-      "accessCount": 2,
-      "lastAccessed": 1781697321820,
-      "type": "file"
-    },
-    {
-      "path": "src/components/features/public-lacak-form.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1781697833880,
-      "type": "file"
-    },
-    {
-      "path": "src/components/features/public-status-timeline.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1781697834237,
-      "type": "file"
-    },
-    {
       "path": "src/app/(admin)/layout.tsx",
       "accessCount": 2,
       "lastAccessed": 1781697835128,
@@ -225,6 +225,18 @@
       "path": "src/components/features/public-print-button.tsx",
       "accessCount": 2,
       "lastAccessed": 1781697835170,
+      "type": "file"
+    },
+    {
+      "path": "plan/backend.md",
+      "accessCount": 2,
+      "lastAccessed": 1781698485396,
+      "type": "file"
+    },
+    {
+      "path": ".env.example",
+      "accessCount": 2,
+      "lastAccessed": 1781701816456,
       "type": "file"
     },
     {
@@ -300,15 +312,33 @@
       "type": "file"
     },
     {
-      "path": "plan/backend.md",
-      "accessCount": 1,
-      "lastAccessed": 1781697240397,
-      "type": "file"
-    },
-    {
       "path": "src/components/features/admin-page-header.tsx",
       "accessCount": 1,
       "lastAccessed": 1781697563150,
+      "type": "file"
+    },
+    {
+      "path": "db/migrations/001_init.sql",
+      "accessCount": 1,
+      "lastAccessed": 1781699518634,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/pricing.ts",
+      "accessCount": 1,
+      "lastAccessed": 1781699526654,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "accessCount": 1,
+      "lastAccessed": 1781699535546,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/midtrans.ts",
+      "accessCount": 1,
+      "lastAccessed": 1781699655309,
       "type": "file"
     }
   ],

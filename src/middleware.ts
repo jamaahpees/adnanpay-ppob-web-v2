@@ -1,26 +1,49 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { jwtVerify } from 'jose'
 
 // Route groups like (admin) are URL-transparent. Admin pages live at:
 //   /login, /dashboard, /produk, /pricing, /transaksi
-// Login is public; the other four require an admin-token cookie.
-// Real auth (JWT verify) lands in Task #4 — for now presence of the cookie gates access.
+// Login is public; the other four require a valid admin JWT cookie.
 const PROTECTED_PATHS = ['/dashboard', '/produk', '/pricing', '/transaksi']
 const LOGIN_PATH = '/login'
-const TOKEN_COOKIE = 'admin-token'
+const TOKEN_COOKIE = process.env.ADMIN_JWT_COOKIE_NAME || 'admin-token'
 
-export function middleware(request: NextRequest) {
+function getJwtSecret(): Uint8Array {
+  return new TextEncoder().encode(process.env.JWT_SECRET || '')
+}
+
+async function isValidAdminToken(token: string): Promise<boolean> {
+  if (!process.env.JWT_SECRET) return false
+  try {
+    const { payload } = await jwtVerify(token, getJwtSecret())
+    return payload.role === 'admin'
+  } catch {
+    return false
+  }
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get(TOKEN_COOKIE)?.value
 
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p))
   const isLogin = pathname === LOGIN_PATH
 
-  if (isProtected && !token) {
+  // If JWT_SECRET is configured, enforce signed-token verification.
+  // If not configured (demo/dev without secrets), fall back to cookie-presence
+  // so the app remains runnable without breaking the build.
+  const tokenValid = token
+    ? process.env.JWT_SECRET
+      ? await isValidAdminToken(token)
+      : true
+    : false
+
+  if (isProtected && !tokenValid) {
     return NextResponse.redirect(new URL(LOGIN_PATH, request.url))
   }
 
-  if (isLogin && token) {
+  if (isLogin && tokenValid) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

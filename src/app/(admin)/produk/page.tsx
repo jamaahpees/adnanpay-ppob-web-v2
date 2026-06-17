@@ -23,6 +23,7 @@ import {
   type AdminProduct,
   type ProductCategory,
 } from '@/components/features/admin-mock-data'
+import { syncDigiflazzAction } from '@/actions/products'
 
 const CATEGORY_BADGE: Record<ProductCategory, string> = {
   Pulsa: 'bg-sky-500/10 text-sky-600 border-sky-500/20',
@@ -58,17 +59,31 @@ export default function AdminProdukPage() {
     }
   }
 
-  function runSync() {
+  async function runSync() {
     setSyncing(true)
     toast.info('Memulai sync Digiflazz', {
       description: 'Mengambil SKU terbaru dari gateway…',
     })
-    setTimeout(() => {
-      setSyncing(false)
-      toast.success('Sync selesai', {
-        description: `${items.length} produk berhasil diperbarui.`,
+    try {
+      const res = await syncDigiflazzAction()
+      if (res.success && res.data) {
+        toast.success('Sync selesai', {
+          description: `${res.data.total} produk berhasil diperbarui.`,
+        })
+      } else {
+        toast.error('Sync gagal', {
+          description:
+            res.error ?? 'Periksa kredensial Digiflazz di .env',
+        })
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error('Sync gagal', {
+        description: 'Terjadi kesalahan tak terduga',
       })
-    }, 1200)
+    } finally {
+      setSyncing(false)
+    }
   }
 
   return (

@@ -1,9 +1,19 @@
 {
-  "current_phase": "team-exec",
+  "active": false,
+  "current_phase": "completed",
+  "task_description": "Task #2: Implement Public/Guest UI (Homepage, Invoice, Lacak) — DONE. All 3 routes render 200, build passes clean.",
+  "completed_at": "2026-06-17T00:00:00Z",
+  "reason": "Task #2 complete. Build passes, routes verified.",
+  "deliverables": [
+    "/",
+    "/lacak",
+    "/invoice/[code]"
+  ],
+  "out_of_scope_build_notes": "Build also includes pre-existing lint-clean admin & db.ts files from worker-1/worker-3 — those routes compile cleanly too.",
   "_meta": {
     "mode": "team",
     "sessionId": null,
-    "updatedAt": "2026-06-17T10:16:20.207Z",
+    "updatedAt": "2026-06-17T12:18:35.485Z",
     "updatedBy": "state_write_tool"
   }
 }

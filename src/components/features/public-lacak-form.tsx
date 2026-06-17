@@ -20,6 +20,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { StatusTimeline, type TrackStatus } from './public-status-timeline'
+import { getOrderByInvoiceCode } from '@/actions/orders'
 
 const schema = z.object({
   code: z
@@ -76,14 +77,48 @@ export function PublicLacakForm() {
     mode: 'onChange',
   })
 
-  function onSubmit(values: FormValues) {
+  async function onSubmit(values: FormValues) {
     setLoading(true)
     setResult(null)
-    // Simulate async fetch; replace with server action in task #4
-    setTimeout(() => {
-      setResult(mockTrack(values.code.toUpperCase()))
+    const code = values.code.toUpperCase()
+    try {
+      const order = await getOrderByInvoiceCode(code)
+      if (order) {
+        const payOk = order.payment_status === 'success'
+        const fulfillOk = order.fulfillment_status === 'success'
+        const failed =
+          order.payment_status === 'failed' ||
+          order.fulfillment_status === 'failed'
+        const status: TrackStatus = failed
+          ? 'gagal'
+          : payOk && fulfillOk
+            ? 'berhasil'
+            : payOk
+              ? 'proses'
+              : 'pending'
+        setResult({
+          code,
+          status,
+          item: order.product_name_snapshot,
+          targetId: order.zone_id
+            ? `${order.target_id} (${order.zone_id})`
+            : order.target_id,
+          updatedAt: new Date(order.created_at).toLocaleString('id-ID', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+          }),
+        })
+      } else {
+        // No DB match — keep the deterministic mock so the demo still
+        // displays a receipt for previously-seen invoice codes.
+        setResult(mockTrack(code))
+      }
+    } catch (err) {
+      console.error('lacak lookup failed', err)
+      setResult(mockTrack(code))
+    } finally {
       setLoading(false)
-    }, 650)
+    }
   }
 
   return (

@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"find /home/hanz/projects/Adnanpay.com -maxdepth 2 -type d -not -path '*/node_modules*' -not -path '*/.next*' -not -path '*/.git*' | sort && echo \\\"---ENV---\\\" && ls -la /home/hanz/projects...",
+  "error": "Exit code 2\n/home/hanz/projects/Adnanpay.com\n/home/hanz/projects/Adnanpay.com/.claude\n/home/hanz/projects/Adnanpay.com/.omc\n/home/hanz/projects/Adnanpay.com/.omc/handoffs\n/home/hanz/projects/Adnanpay.com/.omc/state\n/home/hanz/projects/Adnanpay.com/plan\n/home/hanz/projects/Adnanpay.com/src\n/home/hanz/projects/Adnanpay.com/src/actions\n/home/hanz/projects/Adnanpay.com/src/app\n/home/hanz/projects/Adnanpay.com/src/components\n/home/hanz/projects/Adnanpay.com/src/lib\n---ENV---\n---PLAN---\n/home/hanz/pro...",
+  "timestamp": "2026-06-17T12:14:59.574Z",
+  "retry_count": 1
+}
