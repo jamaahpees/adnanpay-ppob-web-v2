@@ -47,7 +47,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "npm run build 2>&1 | tail -5 && echo \"BUILD OK\"",
+    "buildCommand": "timeout 90 npm run build 2>&1 | tail -15",
     "testCommand": null,
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",
@@ -157,8 +157,8 @@
     },
     {
       "path": "src/components/features/public-homepage.tsx",
-      "accessCount": 22,
-      "lastAccessed": 1781791803667,
+      "accessCount": 25,
+      "lastAccessed": 1781801512782,
       "type": "file"
     },
     {
@@ -180,21 +180,21 @@
       "type": "file"
     },
     {
-      "path": "package.json",
-      "accessCount": 8,
-      "lastAccessed": 1781699372893,
+      "path": "src/app/(public)/page.tsx",
+      "accessCount": 9,
+      "lastAccessed": 1781800648393,
       "type": "file"
     },
     {
       "path": "src/components/features/public-mock-data.ts",
-      "accessCount": 8,
-      "lastAccessed": 1781708198549,
+      "accessCount": 9,
+      "lastAccessed": 1781800675196,
       "type": "file"
     },
     {
-      "path": "src/app/(public)/page.tsx",
+      "path": "package.json",
       "accessCount": 8,
-      "lastAccessed": 1781708709290,
+      "lastAccessed": 1781699372893,
       "type": "file"
     },
     {
@@ -207,6 +207,12 @@
       "path": "src/app/(admin)/transaksi/page.tsx",
       "accessCount": 8,
       "lastAccessed": 1781708970740,
+      "type": "file"
+    },
+    {
+      "path": "src/components/layout/Navbar.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1781801634630,
       "type": "file"
     },
     {
@@ -228,9 +234,21 @@
       "type": "file"
     },
     {
+      "path": "src/components/layout/Footer.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1781801513105,
+      "type": "file"
+    },
+    {
       "path": "src/lib/utils.ts",
       "accessCount": 6,
       "lastAccessed": 1781699225080,
+      "type": "file"
+    },
+    {
+      "path": "src/app/globals.css",
+      "accessCount": 6,
+      "lastAccessed": 1781801089197,
       "type": "file"
     },
     {
@@ -252,27 +270,9 @@
       "type": "file"
     },
     {
-      "path": "src/app/globals.css",
-      "accessCount": 4,
-      "lastAccessed": 1781696507225,
-      "type": "file"
-    },
-    {
       "path": "plan/front_end_plan.md",
       "accessCount": 4,
       "lastAccessed": 1781697504317,
-      "type": "file"
-    },
-    {
-      "path": "src/components/layout/Navbar.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1781697836473,
-      "type": "file"
-    },
-    {
-      "path": "src/components/layout/Footer.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1781697836564,
       "type": "file"
     },
     {
@@ -309,6 +309,12 @@
       "path": ".env.example",
       "accessCount": 3,
       "lastAccessed": 1781704818050,
+      "type": "file"
+    },
+    {
+      "path": "src/app/(public)/layout.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1781801089003,
       "type": "file"
     },
     {
@@ -423,12 +429,6 @@
       "path": "src/components/ui/sonner.tsx",
       "accessCount": 1,
       "lastAccessed": 1781694473233,
-      "type": "file"
-    },
-    {
-      "path": "src/app/(public)/layout.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1781696457284,
       "type": "file"
     },
     {

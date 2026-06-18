@@ -30,7 +30,7 @@ export default function PublicLayout({
 }) {
   return (
     <div
-      className={`${jakarta.variable} ${mono.variable} min-h-screen flex flex-col bg-gradient-to-b from-emerald-50/40 via-white to-white`}
+      className={`${jakarta.variable} ${mono.variable} min-h-screen flex flex-col`}
       style={{
         fontFamily: 'var(--font-jakarta), ui-sans-serif, system-ui, sans-serif',
       }}

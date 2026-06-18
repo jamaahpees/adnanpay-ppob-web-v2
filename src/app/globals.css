@@ -92,6 +92,17 @@
 }
 
 /* ============================================================
+   Scrollbar hiding for category tabs
+   ============================================================ */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================================
    Print styles — invoice receipt
    Hides site chrome and expands the receipt area for printing.
    ============================================================ */
