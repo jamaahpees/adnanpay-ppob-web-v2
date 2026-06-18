@@ -1,62 +1,176 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1781692127781,
+  "lastScanned": 1781782385577,
   "projectRoot": "/home/hanz/projects/Adnanpay.com",
   "techStack": {
-    "languages": [],
-    "frameworks": [],
-    "packageManager": null,
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "14.2.0",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "18.3.0",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "18.3.0",
+        "category": "frontend"
+      },
+      {
+        "name": "vitest",
+        "version": "4.1.9",
+        "category": "testing"
+      }
+    ],
+    "packageManager": "npm",
     "runtime": null
   },
   "build": {
-    "buildCommand": "echo \"=== Verify build still works ===\" \nnpm run build 2>&1 | tail -3\necho \"\"\necho \"=== Git status ===\" \ngit status --short | grep -v \"^ M \\.omc\" | head -20",
-    "testCommand": "echo \"=== REMOVE duplicate/new files we don't need ===\" && rm -v src/lib/category.ts src/lib/constants.ts src/lib/env.ts src/lib/invoice.ts src/lib/password.ts src/lib/status.ts src/lib/validators.ts src/lib/presentation.ts vitest.config.ts 2>/dev/null; rm -v db/schema.sql db/seed.sql 2>/dev/null; echo \"=== DONE CLEANUP ===\" && git status --short | grep -vE '\\.omc'",
-    "lintCommand": null,
-    "devCommand": null,
-    "scripts": {}
+    "buildCommand": "npm run build 2>&1 | tail -5 && echo \"BUILD OK\"",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "next lint"
+    }
   },
   "conventions": {
-    "namingStyle": null,
-    "importStyle": null,
+    "namingStyle": "camelCase",
+    "importStyle": "ES modules",
     "testPattern": null,
-    "fileOrganization": null
+    "fileOrganization": "type-based"
   },
   "structure": {
     "isMonorepo": false,
     "workspaces": [],
-    "mainDirectories": [],
+    "mainDirectories": [
+      "scripts",
+      "src"
+    ],
     "gitBranches": null
   },
   "customNotes": [],
   "directoryMap": {
+    "db": {
+      "path": "db",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1781782385524,
+      "keyFiles": []
+    },
     "plan": {
       "path": "plan",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1781692127775,
+      "lastAccessed": 1781782385525,
       "keyFiles": [
         "backend.md",
         "front_end_plan.md"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 1,
+      "lastAccessed": 1781782385528,
+      "keyFiles": [
+        "scrape-digiflazz.js"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 1,
+      "lastAccessed": 1781782385529,
+      "keyFiles": [
+        "middleware.ts"
+      ]
+    },
+    "db/migrations": {
+      "path": "db/migrations",
+      "purpose": "Database migrations",
+      "fileCount": 1,
+      "lastAccessed": 1781782385530,
+      "keyFiles": [
+        "001_init.sql"
+      ]
+    },
+    "src/app": {
+      "path": "src/app",
+      "purpose": "Application code",
+      "fileCount": 2,
+      "lastAccessed": 1781782385530,
+      "keyFiles": [
+        "globals.css",
+        "layout.tsx"
+      ]
+    },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 0,
+      "lastAccessed": 1781782385530,
+      "keyFiles": []
+    },
+    "src/lib": {
+      "path": "src/lib",
+      "purpose": "Library code",
+      "fileCount": 6,
+      "lastAccessed": 1781782385530,
+      "keyFiles": [
+        "auth.ts",
+        "db.ts",
+        "digiflazz.ts"
       ]
     }
   },
   "hotPaths": [
     {
       "path": "src/app/(admin)/produk/page.tsx",
-      "accessCount": 35,
-      "lastAccessed": 1781709569832,
+      "accessCount": 55,
+      "lastAccessed": 1781789387512,
       "type": "file"
     },
     {
       "path": "src/components/features/public-homepage.tsx",
-      "accessCount": 21,
-      "lastAccessed": 1781708510312,
+      "accessCount": 22,
+      "lastAccessed": 1781791803667,
       "type": "file"
     },
     {
       "path": "src/app/(admin)/pricing/page.tsx",
-      "accessCount": 10,
-      "lastAccessed": 1781700804778,
+      "accessCount": 14,
+      "lastAccessed": 1781791791775,
+      "type": "file"
+    },
+    {
+      "path": "src/components/features/admin-mock-data.ts",
+      "accessCount": 12,
+      "lastAccessed": 1781791388287,
       "type": "file"
     },
     {
@@ -108,15 +222,15 @@
       "type": "file"
     },
     {
-      "path": "src/lib/utils.ts",
-      "accessCount": 6,
-      "lastAccessed": 1781699225080,
+      "path": "db/migrations/001_init.sql",
+      "accessCount": 7,
+      "lastAccessed": 1781738369540,
       "type": "file"
     },
     {
-      "path": "db/migrations/001_init.sql",
+      "path": "src/lib/utils.ts",
       "accessCount": 6,
-      "lastAccessed": 1781712686629,
+      "lastAccessed": 1781699225080,
       "type": "file"
     },
     {
@@ -159,12 +273,6 @@
       "path": "src/components/layout/Footer.tsx",
       "accessCount": 4,
       "lastAccessed": 1781697836564,
-      "type": "file"
-    },
-    {
-      "path": "src/components/features/admin-mock-data.ts",
-      "accessCount": 4,
-      "lastAccessed": 1781699273679,
       "type": "file"
     },
     {

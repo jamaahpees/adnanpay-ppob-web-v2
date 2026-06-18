@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS products (
   name VARCHAR(200) NOT NULL,
   category ENUM('Pulsa','Data','Game','E-Money','PLN','Streaming') NOT NULL,
   base_price INT NOT NULL,
+  admin_fee INT DEFAULT 0,
   buyer_sku_code VARCHAR(100),
   needs_zone BOOLEAN DEFAULT FALSE,
   is_active BOOLEAN DEFAULT TRUE,

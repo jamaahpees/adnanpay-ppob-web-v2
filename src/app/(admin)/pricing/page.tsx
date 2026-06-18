@@ -116,7 +116,7 @@ export default function AdminPricingPage() {
     <div>
       <AdminPageHeader
         title="Master Pricing"
-        description="Harga Jual Final = Harga Modal + Margin. Perubahan diterapkan ke katalog setelah disimpan."
+        description="Harga Jual Final = Harga Modal + Biaya Admin + Profit/Margin. Biaya admin diatur di halaman Produk."
         icon={Tags}
         actions={
           <>

@@ -12,7 +12,23 @@ export interface AdminProduct {
   name: string
   category: ProductCategory
   basePrice: number
+  adminFee: number
   isActive: boolean
+}
+
+/**
+ * Final display price = base + adminFee + profit/margin
+ * adminFee: biaya admin markup (manual input, bisa 0)
+ * margin: profit margin dari pricing rules (persentase/tetap)
+ */
+export function computeDisplayPrice(
+  basePrice: number,
+  adminFee: number,
+  marginType: MarginType,
+  marginValue: number,
+): number {
+  const subtotal = basePrice + adminFee
+  return computeFinalPrice(subtotal, marginType, marginValue)
 }
 
 export interface PricingRule {
@@ -54,20 +70,20 @@ export const transactions7Days: { day: string; count: number }[] = [
 ]
 
 export const products: AdminProduct[] = [
-  { sku: 'TEL10', name: 'Telkomsel 10.000', category: 'Pulsa', basePrice: 10_000, isActive: true },
-  { sku: 'TEL25', name: 'Telkomsel 25.000', category: 'Pulsa', basePrice: 25_000, isActive: true },
-  { sku: 'XL5', name: 'XL 5.000', category: 'Pulsa', basePrice: 5_000, isActive: false },
-  { sku: 'IND20', name: 'Indosat 20.000', category: 'Pulsa', basePrice: 20_000, isActive: true },
-  { sku: 'TRI15', name: 'Tri 15.000', category: 'Pulsa', basePrice: 15_000, isActive: true },
-  { sku: 'AXD5', name: 'Axis Data 5GB', category: 'Data', basePrice: 35_000, isActive: true },
-  { sku: 'TSN10', name: 'Telkomsel Data 10GB', category: 'Data', basePrice: 65_000, isActive: true },
-  { sku: 'XLG8', name: 'XL Data 8GB', category: 'Data', basePrice: 55_000, isActive: false },
-  { sku: 'INDG12', name: 'Indosat Data 12GB', category: 'Data', basePrice: 78_000, isActive: true },
-  { sku: 'ML50', name: 'Mobile Legends 50 Diamond', category: 'Game', basePrice: 12_500, isActive: true },
-  { sku: 'ML172', name: 'Mobile Legends 172 Diamond', category: 'Game', basePrice: 42_000, isActive: true },
-  { sku: 'FF70', name: 'Free Fire 70 Diamond', category: 'Game', basePrice: 10_000, isActive: true },
-  { sku: 'GNS460', name: 'Genshin 460 Crystal', category: 'Game', basePrice: 105_000, isActive: false },
-  { sku: 'VAL135', name: 'Valorant 135 Point', category: 'Game', basePrice: 18_500, isActive: true },
+  { sku: 'TEL10', name: 'Telkomsel 10.000', category: 'Pulsa', basePrice: 10_000, adminFee: 500, isActive: true },
+  { sku: 'TEL25', name: 'Telkomsel 25.000', category: 'Pulsa', basePrice: 25_000, adminFee: 500, isActive: true },
+  { sku: 'XL5', name: 'XL 5.000', category: 'Pulsa', basePrice: 5_000, adminFee: 500, isActive: false },
+  { sku: 'IND20', name: 'Indosat 20.000', category: 'Pulsa', basePrice: 20_000, adminFee: 500, isActive: true },
+  { sku: 'TRI15', name: 'Tri 15.000', category: 'Pulsa', basePrice: 15_000, adminFee: 500, isActive: true },
+  { sku: 'AXD5', name: 'Axis Data 5GB', category: 'Data', basePrice: 35_000, adminFee: 2_000, isActive: true },
+  { sku: 'TSN10', name: 'Telkomsel Data 10GB', category: 'Data', basePrice: 65_000, adminFee: 2_000, isActive: true },
+  { sku: 'XLG8', name: 'XL Data 8GB', category: 'Data', basePrice: 55_000, adminFee: 2_000, isActive: false },
+  { sku: 'INDG12', name: 'Indosat Data 12GB', category: 'Data', basePrice: 78_000, adminFee: 2_000, isActive: true },
+  { sku: 'ML50', name: 'Mobile Legends 50 Diamond', category: 'Game', basePrice: 12_500, adminFee: 1_500, isActive: true },
+  { sku: 'ML172', name: 'Mobile Legends 172 Diamond', category: 'Game', basePrice: 42_000, adminFee: 1_500, isActive: true },
+  { sku: 'FF70', name: 'Free Fire 70 Diamond', category: 'Game', basePrice: 10_000, adminFee: 1_500, isActive: true },
+  { sku: 'GNS460', name: 'Genshin 460 Crystal', category: 'Game', basePrice: 105_000, adminFee: 1_500, isActive: false },
+  { sku: 'VAL135', name: 'Valorant 135 Point', category: 'Game', basePrice: 18_500, adminFee: 1_500, isActive: true },
 ]
 
 export const pricingRules: PricingRule[] = [

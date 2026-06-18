@@ -50,6 +50,7 @@ interface ProductForm {
   name: string
   category: ProductCategory
   basePrice: number
+  adminFee: number
   isActive: boolean
 }
 
@@ -58,6 +59,7 @@ const emptyForm: ProductForm = {
   name: '',
   category: 'Pulsa',
   basePrice: 0,
+  adminFee: 0,
   isActive: true,
 }
 
@@ -96,6 +98,7 @@ function parseImportedFile(
         name,
         category,
         basePrice: price,
+        adminFee: 0,
         isActive: status === 'aktif',
       }
     })
@@ -110,6 +113,9 @@ export default function AdminProdukPage() {
   const [form, setForm] = useState<ProductForm>(emptyForm)
   const [importing, setImporting] = useState(false)
   const [previewRows, setPreviewRows] = useState<AdminProduct[] | null>(null)
+  const [showBulkFee, setShowBulkFee] = useState(false)
+  const [bulkFeeCategory, setBulkFeeCategory] = useState<ProductCategory>('Pulsa')
+  const [bulkFeeValue, setBulkFeeValue] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const filtered = useMemo(() => {
@@ -159,6 +165,7 @@ export default function AdminProdukPage() {
       name: product.name,
       category: product.category,
       basePrice: product.basePrice,
+      adminFee: product.adminFee,
       isActive: product.isActive,
     })
     setShowForm(true)
@@ -170,38 +177,23 @@ export default function AdminProdukPage() {
       })
       return
     }
+    const product = {
+      sku: form.sku.trim(),
+      name: form.name.trim(),
+      category: form.category,
+      basePrice: form.basePrice,
+      adminFee: form.adminFee,
+      isActive: form.isActive,
+    }
     if (editSku) {
-      // Update existing
-      setItems((prev) =>
-        prev.map((p) =>
-          p.sku === editSku
-            ? {
-                ...p,
-                name: form.name.trim(),
-                category: form.category,
-                basePrice: form.basePrice,
-                isActive: form.isActive,
-              }
-            : p,
-        ),
-      )
+      setItems((prev) => prev.map((p) => (p.sku === editSku ? product : p)))
       toast.success('Produk diperbarui', { description: form.name })
     } else {
-      // Add new
-      if (items.some((p) => p.sku === form.sku.trim())) {
+      if (items.some((p) => p.sku === product.sku)) {
         toast.error('SKU sudah ada', { description: form.sku })
         return
       }
-      setItems((prev) => [
-        ...prev,
-        {
-          sku: form.sku.trim(),
-          name: form.name.trim(),
-          category: form.category,
-          basePrice: form.basePrice,
-          isActive: form.isActive,
-        },
-      ])
+      setItems((prev) => [...prev, product])
       toast.success('Produk ditambahkan', { description: form.name })
     }
     setShowForm(false)
@@ -293,6 +285,28 @@ export default function AdminProdukPage() {
     })
   }
 
+  // ── Bulk Admin Fee ──
+  function applyBulkFee() {
+    if (bulkFeeValue < 0) {
+      toast.error('Biaya admin tidak boleh negatif')
+      return
+    }
+    let count = 0
+    setItems((prev) =>
+      prev.map((p) => {
+        if (p.category === bulkFeeCategory) {
+          count++
+          return { ...p, adminFee: bulkFeeValue }
+        }
+        return p
+      }),
+    )
+    toast.success(`${count} produk ${bulkFeeCategory} diupdate`, {
+      description: `Biaya admin: ${formatRupiah(bulkFeeValue)}`,
+    })
+    setShowBulkFee(false)
+  }
+
   // ── Digiflazz sync ──
   async function runSync() {
     setSyncing(true)
@@ -320,12 +334,13 @@ export default function AdminProdukPage() {
 
   // ── Export CSV ──
   function exportCSV() {
-    const header = ['SKU', 'Nama', 'Kategori', 'Harga Modal', 'Status']
+    const header = ['SKU', 'Nama', 'Kategori', 'Harga Modal', 'Biaya Admin', 'Status']
     const rows = items.map((p) => [
       p.sku,
       p.name,
       p.category,
       String(p.basePrice),
+      String(p.adminFee),
       p.isActive ? 'Aktif' : 'Nonaktif',
     ])
     const csv = [header, ...rows].map((r) => r.join(',')).join('\n')
@@ -378,6 +393,9 @@ export default function AdminProdukPage() {
             <Button onClick={runSync} disabled={syncing} variant="default" size="sm">
               <RefreshCw className={cn('h-4 w-4', syncing && 'animate-spin')} />
               {syncing ? 'Syncing…' : 'Sync Digiflazz'}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setShowBulkFee(!showBulkFee)}>
+              ⚡ Bulk Admin Fee
             </Button>
           </div>
         }
@@ -442,7 +460,7 @@ export default function AdminProdukPage() {
           <h3 className="mb-4 font-semibold text-emerald-900">
             {editSku ? 'Edit Produk' : 'Tambah Produk Baru'}
           </h3>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
             <div>
               <Label className="text-xs font-semibold">SKU *</Label>
               <Input
@@ -489,6 +507,19 @@ export default function AdminProdukPage() {
                 className="mt-1"
               />
             </div>
+            <div>
+              <Label className="text-xs font-semibold">Biaya Admin (Rp)</Label>
+              <Input
+                type="number"
+                value={form.adminFee || ''}
+                onChange={(e) =>
+                  setForm({ ...form, adminFee: Number(e.target.value) })
+                }
+                placeholder="500"
+                min={0}
+                className="mt-1"
+              />
+            </div>
             <div className="flex items-end gap-2">
               <Button onClick={saveForm} size="sm">
                 <Check className="h-4 w-4" />
@@ -498,6 +529,51 @@ export default function AdminProdukPage() {
                 Batal
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Admin Fee Panel */}
+      {showBulkFee && (
+        <div className="mb-6 rounded-xl border-2 border-amber-300 bg-amber-50 p-5">
+          <h3 className="mb-4 font-semibold text-amber-900">
+            ⚡ Set Biaya Admin Bulk
+          </h3>
+          <p className="mb-3 text-sm text-amber-700">
+            Atur biaya admin untuk semua produk dalam satu kategori sekaligus.
+            Harga tampil = Harga Modal + Biaya Admin + Profit/Margin.
+          </p>
+          <div className="flex flex-wrap items-end gap-4">
+            <div>
+              <Label className="text-xs font-semibold">Kategori</Label>
+              <select
+                value={bulkFeeCategory}
+                onChange={(e) => setBulkFeeCategory(e.target.value as ProductCategory)}
+                className="mt-1 flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+              >
+                {CATEGORY_OPTIONS.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label className="text-xs font-semibold">Biaya Admin (Rp)</Label>
+              <Input
+                type="number"
+                value={bulkFeeValue || ''}
+                onChange={(e) => setBulkFeeValue(Number(e.target.value))}
+                placeholder="500"
+                min={0}
+                className="mt-1 w-32"
+              />
+            </div>
+            <Button onClick={applyBulkFee} size="sm">
+              <Check className="h-4 w-4" />
+              Terapkan ke {bulkFeeCategory}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setShowBulkFee(false)}>
+              Batal
+            </Button>
           </div>
         </div>
       )}
@@ -543,7 +619,8 @@ export default function AdminProdukPage() {
               <TableHead className="w-[120px]">SKU</TableHead>
               <TableHead>Nama Produk</TableHead>
               <TableHead className="w-[100px]">Kategori</TableHead>
-              <TableHead className="w-[140px] text-right">Harga Modal</TableHead>
+              <TableHead className="w-[120px] text-right">Harga Modal</TableHead>
+              <TableHead className="w-[120px] text-right">Admin Fee</TableHead>
               <TableHead className="w-[100px] text-center">Status</TableHead>
               <TableHead className="w-[80px] text-center">Aksi</TableHead>
             </TableRow>
@@ -551,7 +628,7 @@ export default function AdminProdukPage() {
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
                   Tidak ada produk{query ? ` yang cocok dengan "${query}"` : ''}
                 </TableCell>
               </TableRow>
@@ -579,6 +656,12 @@ export default function AdminProdukPage() {
                     style={{ fontFamily: 'var(--font-mono-jb), ui-monospace, monospace' }}
                   >
                     {formatRupiah(product.basePrice)}
+                  </TableCell>
+                  <TableCell
+                    className="text-right font-mono tabular-nums text-foreground"
+                    style={{ fontFamily: 'var(--font-mono-jb), ui-monospace, monospace' }}
+                  >
+                    {product.adminFee > 0 ? formatRupiah(product.adminFee) : <span className="text-muted-foreground">-</span>}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-2">
