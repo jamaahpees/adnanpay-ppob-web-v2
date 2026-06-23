@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"cd /home/hanz/projects/Adnanpay.com\\npkill -f \\\"next\\\" 2>/dev/null; sleep 1\\nnohup npm run start > /tmp/adnanpay.log 2>&1 &\\nsleep 4\\necho \\\"=== Test homepage render ===\\\"\\ncurl -s -o /dev...",
-  "error": "Exit code 144",
-  "timestamp": "2026-06-23T11:46:45.295Z",
+  "tool_input_preview": "{\"command\":\"cd /home/hanz/projects/Adnanpay.com\\ntimeout 90 npm run build 2>&1 | tail -3\\necho \\\"=== rebuild done ===\\\"\\npkill -f \\\"next\\\" 2>/dev/null; sleep 1\\nnohup npm run start > /tmp/adnanpay.log...",
+  "error": "Exit code 144\n○  (Static)   prerendered as static content\nƒ  (Dynamic)  server-rendered on demand\n\n=== rebuild done ===",
+  "timestamp": "2026-06-23T12:30:42.106Z",
   "retry_count": 1
 }

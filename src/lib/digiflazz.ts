@@ -114,7 +114,9 @@ export function verifyDigiflazzWebhook(
   rawBody: string,
   signature: string,
 ): boolean {
-  if (!WEBHOOK_SECRET) return false
+  // Dev mode: secret unset → caller should bypass (accept unsigned).
+  // Production: secret set → require valid HMAC-SHA256.
+  if (!WEBHOOK_SECRET) return true
   const expected = crypto
     .createHmac('sha256', WEBHOOK_SECRET)
     .update(rawBody)

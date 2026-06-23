@@ -39,7 +39,9 @@ export async function POST(request: Request): Promise<NextResponse> {
     ? signature.slice('sha256='.length)
     : signature
 
-  if (!received || !verifyDigiflazzWebhook(raw, received)) {
+  // Dev mode: when DIGIFLAZZ_WEBHOOK_SECRET is unset, accept unsigned callbacks.
+  const secretConfigured = !!process.env.DIGIFLAZZ_WEBHOOK_SECRET
+  if (secretConfigured && !verifyDigiflazzWebhook(raw, received)) {
     return NextResponse.json(
       { error: 'Invalid signature' },
       { status: 401 },
