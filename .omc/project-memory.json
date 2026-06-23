@@ -52,7 +52,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "cd /home/hanz/projects/Adnanpay.com\n# Remove all image: lines from mock data (emoji fallback already in place)\nsed -i \"/image: '\\/brands\\//d\" src/components/features/public-mock-data.ts\necho \"=== Remaining image refs ===\"\ngrep -c \"image:\" src/components/features/public-mock-data.ts\necho \"\"\necho \"=== Verify build ===\"\ntimeout 90 npm run build 2>&1 | tail -4",
+    "buildCommand": "npm run build 2>&1 | tail -12",
     "testCommand": null,
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",
@@ -188,6 +188,12 @@
       "type": "file"
     },
     {
+      "path": "src/app/(admin)/login/page.tsx",
+      "accessCount": 14,
+      "lastAccessed": 1782232526456,
+      "type": "file"
+    },
+    {
       "path": "src/components/features/admin-mock-data.ts",
       "accessCount": 12,
       "lastAccessed": 1781791388287,
@@ -209,6 +215,12 @@
       "path": "src/components/features/public-mock-data.ts",
       "accessCount": 9,
       "lastAccessed": 1781800675196,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/db.ts",
+      "accessCount": 9,
+      "lastAccessed": 1782227712242,
       "type": "file"
     },
     {
@@ -236,9 +248,15 @@
       "type": "file"
     },
     {
-      "path": "src/app/(admin)/login/page.tsx",
-      "accessCount": 7,
-      "lastAccessed": 1781700569697,
+      "path": "src/middleware.ts",
+      "accessCount": 8,
+      "lastAccessed": 1782227418355,
+      "type": "file"
+    },
+    {
+      "path": "next.config.mjs",
+      "accessCount": 8,
+      "lastAccessed": 1782229399775,
       "type": "file"
     },
     {
@@ -278,15 +296,9 @@
       "type": "file"
     },
     {
-      "path": "src/lib/db.ts",
+      "path": ".env.example",
       "accessCount": 5,
-      "lastAccessed": 1781699224859,
-      "type": "file"
-    },
-    {
-      "path": "src/middleware.ts",
-      "accessCount": 5,
-      "lastAccessed": 1781701622277,
+      "lastAccessed": 1782232399732,
       "type": "file"
     },
     {
@@ -308,12 +320,6 @@
       "type": "file"
     },
     {
-      "path": "next.config.mjs",
-      "accessCount": 3,
-      "lastAccessed": 1781697240787,
-      "type": "file"
-    },
-    {
       "path": "src/components/layout/AdminSidebar.tsx",
       "accessCount": 3,
       "lastAccessed": 1781697835259,
@@ -329,12 +335,6 @@
       "path": "tsconfig.json",
       "accessCount": 3,
       "lastAccessed": 1781699372925,
-      "type": "file"
-    },
-    {
-      "path": ".env.example",
-      "accessCount": 3,
-      "lastAccessed": 1781704818050,
       "type": "file"
     },
     {
@@ -383,6 +383,12 @@
       "path": "src/lib/pricing.ts",
       "accessCount": 2,
       "lastAccessed": 1781704541574,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "accessCount": 2,
+      "lastAccessed": 1782227372467,
       "type": "file"
     },
     {
@@ -455,12 +461,6 @@
       "path": "src/components/features/admin-page-header.tsx",
       "accessCount": 1,
       "lastAccessed": 1781697563150,
-      "type": "file"
-    },
-    {
-      "path": "src/lib/auth.ts",
-      "accessCount": 1,
-      "lastAccessed": 1781699535546,
       "type": "file"
     },
     {
