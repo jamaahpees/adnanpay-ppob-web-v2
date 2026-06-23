@@ -110,7 +110,6 @@ const pulsaBrands: Brand[] = [
   {
     id: 'tsel', name: 'Telkomsel', slug: 'telkomsel', category: 'pulsa',
     gradient: 'from-red-500 to-rose-600', emoji: '🔴',
-    image: '/brands/telkomsel.png',
     denominations: [
       { id: 't5', name: 'Pulsa 5.000', label: '5.000', price: 6000, sku: 'TSEL5' },
       { id: 't10', name: 'Pulsa 10.000', label: '10.000', price: 11000, sku: 'TSEL10' },
@@ -125,7 +124,6 @@ const pulsaBrands: Brand[] = [
   {
     id: 'xl', name: 'XL', slug: 'xl', category: 'pulsa',
     gradient: 'from-blue-600 to-indigo-700', emoji: '🔵',
-    image: '/brands/xl.png',
     denominations: [
       { id: 'x5', name: 'Pulsa 5.000', label: '5.000', price: 6000, sku: 'XL5' },
       { id: 'x10', name: 'Pulsa 10.000', label: '10.000', price: 11000, sku: 'XL10' },
@@ -137,7 +135,6 @@ const pulsaBrands: Brand[] = [
   {
     id: 'indosat', name: 'Indosat', slug: 'indosat', category: 'pulsa',
     gradient: 'from-yellow-500 to-amber-600', emoji: '🟡',
-    image: '/brands/indosat.png',
     denominations: [
       { id: 'i5', name: 'Pulsa 5.000', label: '5.000', price: 6000, sku: 'ISAT5' },
       { id: 'i10', name: 'Pulsa 10.000', label: '10.000', price: 11000, sku: 'ISAT10' },
@@ -149,7 +146,6 @@ const pulsaBrands: Brand[] = [
   {
     id: 'tri', name: 'Tri (3)', slug: 'tri', category: 'pulsa',
     gradient: 'from-orange-500 to-red-500', emoji: '🟠',
-    image: '/brands/tri.png',
     denominations: [
       { id: 'r5', name: 'Pulsa 5.000', label: '5.000', price: 6000, sku: 'TRI5' },
       { id: 'r10', name: 'Pulsa 10.000', label: '10.000', price: 11000, sku: 'TRI10' },
@@ -161,7 +157,6 @@ const pulsaBrands: Brand[] = [
   {
     id: 'axis', name: 'Axis', slug: 'axis', category: 'pulsa',
     gradient: 'from-purple-600 to-fuchsia-600', emoji: '🟣',
-    image: '/brands/axis.png',
     denominations: [
       { id: 'a5', name: 'Pulsa 5.000', label: '5.000', price: 6000, sku: 'AXIS5' },
       { id: 'a10', name: 'Pulsa 10.000', label: '10.000', price: 11000, sku: 'AXIS10' },
@@ -172,7 +167,6 @@ const pulsaBrands: Brand[] = [
   {
     id: 'smartfren', name: 'Smartfren', slug: 'smartfren', category: 'pulsa',
     gradient: 'from-rose-500 to-pink-600', emoji: '🌸',
-    image: '/brands/smartfren.png',
     denominations: [
       { id: 'sf5', name: 'Pulsa 5.000', label: '5.000', price: 6000, sku: 'SF5' },
       { id: 'sf10', name: 'Pulsa 10.000', label: '10.000', price: 11000, sku: 'SF10' },
@@ -183,7 +177,6 @@ const pulsaBrands: Brand[] = [
   {
     id: 'byu', name: 'by.U', slug: 'byu', category: 'pulsa',
     gradient: 'from-cyan-500 to-blue-500', emoji: '💎',
-    image: '/brands/byu.png',
     denominations: [
       { id: 'b10', name: 'Pulsa 10.000', label: '10.000', price: 11500, sku: 'BYU10' },
       { id: 'b20', name: 'Pulsa 20.000', label: '20.000', price: 21500, sku: 'BYU20' },
@@ -197,7 +190,6 @@ const dataBrands: Brand[] = [
   {
     id: 'tsel-data', name: 'Telkomsel Data', slug: 'telkomsel-data', category: 'data',
     gradient: 'from-emerald-500 to-teal-600', emoji: '📶',
-    image: '/brands/telkomsel-data.png',
     denominations: [
       { id: 'td1', name: 'Data 1.5GB (7 Hari)', label: '1.5GB / 7 Hari', price: 16000, sku: 'TSEL1.5GB7' },
       { id: 'td2', name: 'Data 4GB (30 Hari)', label: '4GB / 30 Hari', price: 40000, sku: 'TSEL4GB30' },
@@ -210,7 +202,6 @@ const dataBrands: Brand[] = [
   {
     id: 'xl-data', name: 'XL Data', slug: 'xl-data', category: 'data',
     gradient: 'from-cyan-500 to-blue-600', emoji: '📶',
-    image: '/brands/xl-data.png',
     denominations: [
       { id: 'xd1', name: 'Data 1GB (30 Hari)', label: '1GB / 30 Hari', price: 18000, sku: 'XL1GB30' },
       { id: 'xd2', name: 'Data 3GB (30 Hari)', label: '3GB / 30 Hari', price: 45000, sku: 'XL3GB30' },
@@ -222,7 +213,6 @@ const dataBrands: Brand[] = [
   {
     id: 'indosat-data', name: 'Indosat Data', slug: 'indosat-data', category: 'data',
     gradient: 'from-lime-500 to-green-600', emoji: '📶',
-    image: '/brands/indosat-data.png',
     denominations: [
       { id: 'id1', name: 'Data 2GB (30 Hari)', label: '2GB / 30 Hari', price: 22000, sku: 'ISAT2GB30' },
       { id: 'id2', name: 'Data 5GB (30 Hari)', label: '5GB / 30 Hari', price: 45000, sku: 'ISAT5GB30' },
@@ -233,7 +223,6 @@ const dataBrands: Brand[] = [
   {
     id: 'tri-data', name: 'Tri Data', slug: 'tri-data', category: 'data',
     gradient: 'from-amber-500 to-orange-600', emoji: '📶',
-    image: '/brands/tri-data.png',
     denominations: [
       { id: 'rd1', name: 'Data 2GB (30 Hari)', label: '2GB / 30 Hari', price: 20000, sku: 'TRI2GB30' },
       { id: 'rd2', name: 'Data 4GB (30 Hari)', label: '4GB / 30 Hari', price: 40000, sku: 'TRI4GB30' },
@@ -248,7 +237,6 @@ const gameBrands: Brand[] = [
   {
     id: 'ml', name: 'Mobile Legends', slug: 'mobile-legends', category: 'game',
     gradient: 'from-sky-500 to-blue-700', emoji: '⚔️',
-    image: '/brands/mobile-legends.png', needsZone: true,
     denominations: [
       { id: 'ml1', name: '5 Diamond', label: '5 💎', price: 1500, sku: 'ML5', needsZone: true },
       { id: 'ml2', name: '12 Diamond', label: '12 💎', price: 3500, sku: 'ML12', needsZone: true },
@@ -273,7 +261,6 @@ const gameBrands: Brand[] = [
   {
     id: 'ff', name: 'Free Fire', slug: 'free-fire', category: 'game',
     gradient: 'from-orange-500 to-red-600', emoji: '🔥',
-    image: '/brands/free-fire.png',
     denominations: [
       { id: 'ff1', name: '5 Diamond', label: '5 💎', price: 1000, sku: 'FF5' },
       { id: 'ff2', name: '12 Diamond', label: '12 💎', price: 2000, sku: 'FF12' },
@@ -291,7 +278,6 @@ const gameBrands: Brand[] = [
   {
     id: 'genshin', name: 'Genshin Impact', slug: 'genshin-impact', category: 'game',
     gradient: 'from-violet-500 to-purple-700', emoji: '✨',
-    image: '/brands/genshin.png',
     denominations: [
       { id: 'gi1', name: '60 Genesis Crystals', label: '60 Crystals', price: 16000, sku: 'GI60' },
       { id: 'gi2', name: '300+35 Genesis Crystals', label: '300+35', price: 79000, sku: 'GI300' },
@@ -305,7 +291,6 @@ const gameBrands: Brand[] = [
   {
     id: 'pubg', name: 'PUBG Mobile', slug: 'pubg-mobile', category: 'game',
     gradient: 'from-amber-600 to-yellow-700', emoji: '🎯',
-    image: '/brands/pubg.png',
     denominations: [
       { id: 'pg1', name: '60 UC', label: '60 UC', price: 14500, sku: 'PUBG60' },
       { id: 'pg2', name: '150+5 UC', label: '150+5 UC', price: 33000, sku: 'PUBG150' },
@@ -319,7 +304,6 @@ const gameBrands: Brand[] = [
   {
     id: 'valorant', name: 'Valorant', slug: 'valorant', category: 'game',
     gradient: 'from-rose-500 to-red-700', emoji: '💥',
-    image: '/brands/valorant.png',
     denominations: [
       { id: 'vl1', name: '125 VP', label: '125 VP', price: 16000, sku: 'VAL125' },
       { id: 'vl2', name: '475 VP', label: '475 VP', price: 59000, sku: 'VAL475' },
@@ -331,7 +315,6 @@ const gameBrands: Brand[] = [
   {
     id: 'honkai', name: 'Honkai: Star Rail', slug: 'honkai-star-rail', category: 'game',
     gradient: 'from-fuchsia-500 to-pink-700', emoji: '🌟',
-    image: '/brands/honkai-sr.png',
     denominations: [
       { id: 'hsr1', name: '60 Oneiric Shards', label: '60 Shards', price: 16000, sku: 'HSR60' },
       { id: 'hsr2', name: '330 Oneiric Shards', label: '330 Shards', price: 79000, sku: 'HSR330' },
@@ -345,7 +328,6 @@ const gameBrands: Brand[] = [
   {
     id: 'aov', name: 'Arena of Valor', slug: 'arena-of-valor', category: 'game',
     gradient: 'from-indigo-500 to-blue-700', emoji: '🛡️',
-    image: '/brands/aov.png',
     denominations: [
       { id: 'aov1', name: '40 Voucher', label: '40 Voucher', price: 10000, sku: 'AOV40' },
       { id: 'aov2', name: '66 Voucher', label: '66 Voucher', price: 16000, sku: 'AOV66' },
@@ -356,7 +338,6 @@ const gameBrands: Brand[] = [
   {
     id: 'codm', name: 'Call of Duty Mobile', slug: 'cod-mobile', category: 'game',
     gradient: 'from-stone-600 to-stone-800', emoji: '🔫',
-    image: '/brands/codm.png',
     denominations: [
       { id: 'cm1', name: '80 CP', label: '80 CP', price: 16000, sku: 'CODM80' },
       { id: 'cm2', name: '400 CP', label: '400 CP', price: 79000, sku: 'CODM400' },
@@ -371,7 +352,6 @@ const emoneyBrands: Brand[] = [
   {
     id: 'gopay', name: 'GoPay', slug: 'gopay', category: 'emoney',
     gradient: 'from-green-500 to-emerald-600', emoji: '💚',
-    image: '/brands/gopay.png',
     denominations: [
       { id: 'gp20', name: 'Saldo 20.000', label: '20.000', price: 21000, sku: 'GOPAY20' },
       { id: 'gp50', name: 'Saldo 50.000', label: '50.000', price: 51000, sku: 'GOPAY50' },
@@ -383,7 +363,6 @@ const emoneyBrands: Brand[] = [
   {
     id: 'ovo', name: 'OVO', slug: 'ovo', category: 'emoney',
     gradient: 'from-purple-600 to-violet-700', emoji: '🟣',
-    image: '/brands/ovo.png',
     denominations: [
       { id: 'ov20', name: 'Saldo 20.000', label: '20.000', price: 21000, sku: 'OVO20' },
       { id: 'ov50', name: 'Saldo 50.000', label: '50.000', price: 51000, sku: 'OVO50' },
@@ -394,7 +373,6 @@ const emoneyBrands: Brand[] = [
   {
     id: 'dana', name: 'DANA', slug: 'dana', category: 'emoney',
     gradient: 'from-blue-500 to-cyan-600', emoji: '🔵',
-    image: '/brands/dana.png',
     denominations: [
       { id: 'dn20', name: 'Saldo 20.000', label: '20.000', price: 21000, sku: 'DANA20' },
       { id: 'dn50', name: 'Saldo 50.000', label: '50.000', price: 51000, sku: 'DANA50' },
@@ -405,7 +383,6 @@ const emoneyBrands: Brand[] = [
   {
     id: 'shopeepay', name: 'ShopeePay', slug: 'shopeepay', category: 'emoney',
     gradient: 'from-orange-500 to-red-500', emoji: '🛍️',
-    image: '/brands/shopeepay.png',
     denominations: [
       { id: 'sp10', name: 'Saldo 10.000', label: '10.000', price: 11000, sku: 'SPAY10' },
       { id: 'sp50', name: 'Saldo 50.000', label: '50.000', price: 51000, sku: 'SPAY50' },
@@ -415,7 +392,6 @@ const emoneyBrands: Brand[] = [
   {
     id: 'linkaja', name: 'LinkAja', slug: 'linkaja', category: 'emoney',
     gradient: 'from-red-500 to-rose-600', emoji: '🔴',
-    image: '/brands/linkaja.png',
     denominations: [
       { id: 'la20', name: 'Saldo 20.000', label: '20.000', price: 21000, sku: 'LINK20' },
       { id: 'la50', name: 'Saldo 50.000', label: '50.000', price: 51000, sku: 'LINK50' },
@@ -429,7 +405,6 @@ const plnBrands: Brand[] = [
   {
     id: 'pln', name: 'PLN Prabayar', slug: 'pln-prabayar', category: 'pln',
     gradient: 'from-yellow-400 to-amber-500', emoji: '⚡',
-    image: '/brands/pln.png',
     denominations: [
       { id: 'pln20', name: 'Token 20.000', label: '20.000', price: 21000, sku: 'PLN20' },
       { id: 'pln50', name: 'Token 50.000', label: '50.000', price: 51000, sku: 'PLN50' },
@@ -446,7 +421,6 @@ const streamingBrands: Brand[] = [
   {
     id: 'netflix', name: 'Netflix', slug: 'netflix', category: 'streaming',
     gradient: 'from-red-600 to-rose-700', emoji: '🎬',
-    image: '/brands/netflix.png',
     denominations: [
       { id: 'nf1', name: 'Mobile (1 Bulan)', label: 'Mobile', price: 54000, sku: 'NFXM' },
       { id: 'nf2', name: 'Basic (1 Bulan)', label: 'Basic', price: 65000, sku: 'NFXB' },
@@ -457,7 +431,6 @@ const streamingBrands: Brand[] = [
   {
     id: 'spotify', name: 'Spotify', slug: 'spotify', category: 'streaming',
     gradient: 'from-green-500 to-emerald-600', emoji: '🎵',
-    image: '/brands/spotify.png',
     denominations: [
       { id: 'sp1', name: 'Premium Individual (1 Bulan)', label: 'Individual', price: 54900, sku: 'SPOTIND' },
       { id: 'sp2', name: 'Premium Family (1 Bulan)', label: 'Family', price: 89900, sku: 'SPOTFAM' },
@@ -467,7 +440,6 @@ const streamingBrands: Brand[] = [
   {
     id: 'disney', name: 'Disney+ Hotstar', slug: 'disney-hotstar', category: 'streaming',
     gradient: 'from-blue-600 to-indigo-700', emoji: '🏰',
-    image: '/brands/disney.png',
     denominations: [
       { id: 'dp1', name: 'Mobile (1 Bulan)', label: 'Mobile', price: 39000, sku: 'DPMM' },
       { id: 'dp2', name: 'Premium (1 Bulan)', label: 'Premium', price: 79000, sku: 'DPPM' },
@@ -476,7 +448,6 @@ const streamingBrands: Brand[] = [
   {
     id: 'vidio', name: 'Vidio', slug: 'vidio', category: 'streaming',
     gradient: 'from-blue-500 to-sky-600', emoji: '📺',
-    image: '/brands/vidio.png',
     denominations: [
       { id: 'vd1', name: 'Platinum (1 Bulan)', label: 'Platinum', price: 55000, sku: 'VIDPLAT' },
       { id: 'vd2', name: 'Platinum Annual (1 Tahun)', label: 'Platinum Annual', price: 450000, sku: 'VIDPLATYR' },

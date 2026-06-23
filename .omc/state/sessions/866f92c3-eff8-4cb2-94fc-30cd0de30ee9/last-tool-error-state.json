@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"npm run build 2>&1\",\"timeout\":120000,\"description\":\"Run build to verify changes\"}",
-  "error": "Exit code 1\n\n> adnanpay-ppob-web@0.1.0 build\n> next build\n\n  ▲ Next.js 14.2.35\n  - Environments: .env\n\n   Creating an optimized production build ...\n ✓ Compiled successfully\n   Linting and checking validity of types ...\n   Collecting page data ...\n   Generating static pages (0/12) ...\nTypeError: h.useState is not a function or its return value is not iterable\n    at u (/home/hanz/projects/Adnanpay.com/.next/server/chunks/985.js:1:3353)\n    at em (/home/hanz/projects/Adnanpay.com/node_modules/nex...",
-  "timestamp": "2026-06-18T16:53:43.722Z",
+  "tool_input_preview": "{\"command\":\"cd /home/hanz/projects/Adnanpay.com\\npkill -f \\\"next\\\" 2>/dev/null; sleep 1\\nnohup npm run start > /tmp/adnanpay.log 2>&1 &\\nsleep 4\\necho \\\"=== Test homepage render ===\\\"\\ncurl -s -o /dev...",
+  "error": "Exit code 144",
+  "timestamp": "2026-06-23T11:46:45.295Z",
   "retry_count": 1
 }

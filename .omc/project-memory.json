@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1781782385577,
+  "lastScanned": 1782214128810,
   "projectRoot": "/home/hanz/projects/Adnanpay.com",
   "techStack": {
     "languages": [
@@ -38,6 +38,11 @@
         "category": "frontend"
       },
       {
+        "name": "playwright",
+        "version": "1.61.0",
+        "category": "testing"
+      },
+      {
         "name": "vitest",
         "version": "4.1.9",
         "category": "testing"
@@ -47,7 +52,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "timeout 90 npm run build 2>&1 | tail -15",
+    "buildCommand": "cd /home/hanz/projects/Adnanpay.com\n# Remove all image: lines from mock data (emoji fallback already in place)\nsed -i \"/image: '\\/brands\\//d\" src/components/features/public-mock-data.ts\necho \"=== Remaining image refs ===\"\ngrep -c \"image:\" src/components/features/public-mock-data.ts\necho \"\"\necho \"=== Verify build ===\"\ntimeout 90 npm run build 2>&1 | tail -4",
     "testCommand": null,
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",
@@ -68,6 +73,7 @@
     "isMonorepo": false,
     "workspaces": [],
     "mainDirectories": [
+      "public",
       "scripts",
       "src"
     ],
@@ -79,24 +85,31 @@
       "path": "db",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1781782385524,
+      "lastAccessed": 1782214128626,
       "keyFiles": []
     },
     "plan": {
       "path": "plan",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1781782385525,
+      "lastAccessed": 1782214128626,
       "keyFiles": [
         "backend.md",
         "front_end_plan.md"
       ]
     },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 0,
+      "lastAccessed": 1782214128706,
+      "keyFiles": []
+    },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 1,
-      "lastAccessed": 1781782385528,
+      "lastAccessed": 1782214128707,
       "keyFiles": [
         "scrape-digiflazz.js"
       ]
@@ -105,7 +118,7 @@
       "path": "src",
       "purpose": "Source code",
       "fileCount": 1,
-      "lastAccessed": 1781782385529,
+      "lastAccessed": 1782214128710,
       "keyFiles": [
         "middleware.ts"
       ]
@@ -114,16 +127,23 @@
       "path": "db/migrations",
       "purpose": "Database migrations",
       "fileCount": 1,
-      "lastAccessed": 1781782385530,
+      "lastAccessed": 1782214128711,
       "keyFiles": [
         "001_init.sql"
       ]
+    },
+    "public/assets": {
+      "path": "public/assets",
+      "purpose": "Static assets",
+      "fileCount": 0,
+      "lastAccessed": 1782214128711,
+      "keyFiles": []
     },
     "src/app": {
       "path": "src/app",
       "purpose": "Application code",
       "fileCount": 2,
-      "lastAccessed": 1781782385530,
+      "lastAccessed": 1782214128711,
       "keyFiles": [
         "globals.css",
         "layout.tsx"
@@ -133,14 +153,14 @@
       "path": "src/components",
       "purpose": "UI components",
       "fileCount": 0,
-      "lastAccessed": 1781782385530,
+      "lastAccessed": 1782214128711,
       "keyFiles": []
     },
     "src/lib": {
       "path": "src/lib",
       "purpose": "Library code",
       "fileCount": 6,
-      "lastAccessed": 1781782385530,
+      "lastAccessed": 1782214128711,
       "keyFiles": [
         "auth.ts",
         "db.ts",
@@ -157,8 +177,8 @@
     },
     {
       "path": "src/components/features/public-homepage.tsx",
-      "accessCount": 25,
-      "lastAccessed": 1781801512782,
+      "accessCount": 26,
+      "lastAccessed": 1781826432043,
       "type": "file"
     },
     {
@@ -276,9 +296,15 @@
       "type": "file"
     },
     {
+      "path": "src/app/(public)/layout.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1781825994106,
+      "type": "file"
+    },
+    {
       "path": "src/app/layout.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1781696121318,
+      "accessCount": 4,
+      "lastAccessed": 1781825994161,
       "type": "file"
     },
     {
@@ -309,12 +335,6 @@
       "path": ".env.example",
       "accessCount": 3,
       "lastAccessed": 1781704818050,
-      "type": "file"
-    },
-    {
-      "path": "src/app/(public)/layout.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1781801089003,
       "type": "file"
     },
     {
