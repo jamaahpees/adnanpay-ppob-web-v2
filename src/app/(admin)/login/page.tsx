@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Lock, User, ArrowRight, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 
 import {
   Card,
@@ -40,6 +41,8 @@ type LoginValues = z.infer<typeof loginSchema>
 export default function AdminLoginPage() {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const turnstileRef = useRef<TurnstileInstance | null>(null)
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -49,11 +52,17 @@ export default function AdminLoginPage() {
   async function onSubmit(values: LoginValues) {
     setSubmitting(true)
     try {
-      const res = await loginAction(values)
+      const res = await loginAction({
+        ...values,
+        captchaToken: captchaToken ?? undefined,
+      })
       if (!res.success || !res.data) {
         toast.error('Login gagal', {
           description: res.error ?? 'Kredensial tidak valid',
         })
+        // Reset captcha on failure
+        turnstileRef.current?.reset()
+        setCaptchaToken(null)
         return
       }
       toast.success('Login berhasil', {
@@ -68,6 +77,8 @@ export default function AdminLoginPage() {
       toast.error('Login gagal', {
         description: 'Terjadi kesalahan tak terduga',
       })
+      turnstileRef.current?.reset()
+      setCaptchaToken(null)
     } finally {
       setSubmitting(false)
     }
@@ -143,6 +154,15 @@ export default function AdminLoginPage() {
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+                <Turnstile
+                  ref={turnstileRef}
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ''}
+                  onSuccess={(token) => setCaptchaToken(token)}
+                  options={{
+                    theme: 'dark',
+                    size: 'invisible',
+                  }}
                 />
                 <Button
                   type="submit"

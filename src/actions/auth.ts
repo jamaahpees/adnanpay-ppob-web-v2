@@ -1,8 +1,11 @@
 'use server'
 
 import { z } from 'zod'
+import { headers } from 'next/headers'
 
 import { query } from '@/lib/db'
+import { checkRateLimit } from '@/lib/rate-limit'
+import { verifyTurnstile } from '@/lib/turnstile'
 import {
   hashPassword,
   verifyPassword,
@@ -28,6 +31,7 @@ const loginSchema = z.object({
     .min(3, 'Username minimal 3 karakter')
     .max(32, 'Username maksimal 32 karakter'),
   password: z.string().min(6, 'Password minimal 6 karakter'),
+  captchaToken: z.string().optional(),
 })
 
 export type LoginInput = z.infer<typeof loginSchema>
@@ -54,8 +58,27 @@ export async function loginAction(
       error: parsed.error.issues[0]?.message ?? 'Input tidak valid',
     }
   }
-  const { username, password } = parsed.data
+  const { username, password, captchaToken } = parsed.data
 
+  // Rate limit — 5 attempts per IP per 5 minutes
+  const ip = headers().get('x-forwarded-for') ?? 'unknown'
+  const rl = checkRateLimit(`login:${ip}`, 5, 300_000)
+  if (!rl.allowed) {
+    return {
+      success: false,
+      error: 'Terlalu banyak percobaan. Coba lagi dalam beberapa menit.',
+    }
+  }
+
+  // Turnstile verification (if token provided — invisible mode auto-validates)
+  if (captchaToken) {
+    const captchaOk = await verifyTurnstile(captchaToken)
+    if (!captchaOk) {
+      return { success: false, error: 'Verifikasi captcha gagal. Coba lagi.' }
+    }
+  }
+
+  let success = false
   try {
     const rows = await query<AdminUserRow[]>(
       'SELECT id, username, password_hash FROM admin_users WHERE username = ? LIMIT 1',
@@ -63,20 +86,31 @@ export async function loginAction(
     )
     const user = rows?.[0]
     if (!user) {
+      await failedDelay()
       return { success: false, error: 'Username atau password salah' }
     }
     const ok = await verifyPassword(password, user.password_hash)
     if (!ok) {
+      await failedDelay()
       return { success: false, error: 'Username atau password salah' }
     }
+    success = true
     return await issueAdminSession(String(user.id), user.username)
   } catch (err) {
     console.error('loginAction DB error', err)
     if (process.env.NODE_ENV !== 'production' && username === 'admin' && password === 'admin123') {
       return await issueAdminSession('0', 'admin', true)
     }
+    await failedDelay()
     return { success: false, error: 'Layanan login sedang bermasalah' }
+  } finally {
+    if (!success) await failedDelay()
   }
+}
+
+/** Add artificial delay after failed attempt to slow brute force. */
+async function failedDelay(): Promise<void> {
+  await new Promise((r) => setTimeout(r, 2000))
 }
 
 async function issueAdminSession(
