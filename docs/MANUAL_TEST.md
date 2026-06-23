@@ -189,3 +189,32 @@ Digiflazz dashboard: https://id.digiflazz.com
 - Midtrans test cards: https://docs.midtrans.com/en/technical-reference/sandbox-test
 - Digiflazz dev mode: buyer SKU `dev-` prefix, no real transaction
 - Reference repo: `/media/hanz/New Volume/coding/1.PPOB PAYMENT/.env`
+
+---
+
+## 9. Simulation Results (verified 2026-06-23)
+
+### Webhook Checklist (curl)
+
+| # | Test | Expected | Result |
+|---|------|----------|--------|
+| 1 | GET /api/webhook/midtrans | 405 | ✅ 405 |
+| 2 | GET /api/webhook/digiflazz | 405 | ✅ 405 |
+| 3 | POST digiflazz unsigned (dev) | 200 received | ✅ `{"received":true,"fulfillmentStatus":"success"}` |
+| 4 | POST digiflazz missing ref_id | 400 | ✅ `{"error":"Missing ref_id"}` |
+| 5 | POST midtrans bad signature | 200 matched:false | ⚠️ 400 "Invalid payload" (field incomplete) |
+
+### Web Simulation Checklist (Playwright, 1440×900)
+
+| # | Page | Expected | Result |
+|---|------|----------|--------|
+| 1 | Homepage `/` | 200 + title | ✅ "Adnanpay — Pulsa, Paket Data & Voucher Game" |
+| 2 | Click "Voucher Game" | Category switch | ✅ Game brands shown |
+| 3 | Click "Mobile Legends" | Denominations | ✅ Diamond packages list |
+| 4 | Login `/login` | 200 form | ✅ Admin login form |
+| 5 | Lacak `/lacak` | 200 form | ✅ Invoice code tracking |
+| 6 | Invoice `/invoice/INV-...` | 200 receipt | ✅ Print-ready invoice |
+
+**Screenshots:** `docs/test-screenshots/01-homepage.png` ... `06-invoice.png`
+
+**Client-side errors:** 0 (homepage HTML clean, no exception).
