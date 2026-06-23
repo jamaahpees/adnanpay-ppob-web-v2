@@ -94,15 +94,20 @@ AMOUNT="11000"
 SERVER_KEY="dev-midtrans-server-key"
 SIG=$(echo -n "${ORDER}${STATUS}${AMOUNT}${SERVER_KEY}" | sha512sum | awk '{print $1}')
 
+# Test matched:false — pakai signature palsu
 curl -X POST http://localhost:3000/api/webhook/midtrans \
   -H "Content-Type: application/json" \
-  -d "{
-    \"order_id\": \"$ORDER\",
-    \"status_code\": \"$STATUS\",
-    \"gross_amount\": \"$AMOUNT\",
-    \"transaction_status\": \"settlement\",
-    \"signature_key\": \"$SIG\"
-  }"
+  -d '{
+    "order_id": "INV-20260619-AB12",
+    "status_code": "200",
+    "gross_amount": "11000",
+    "transaction_status": "settlement",
+    "signature_key": "BADSIGNATURE123"
+  }'
+
+# Test matched:true — generate signature real (butuh SERVER_KEY benar)
+# SIG=$(echo -n "${ORDER}${STATUS}${AMOUNT}${SERVER_KEY}" | sha512sum | awk '{print $1}')
+# curl -X POST ...signature_key: "$SIG"...
 ```
 **Expected:** `200 OK` with `{"received":true,"matched":true}` → order.payment_status → `success`.
 
@@ -202,7 +207,8 @@ Digiflazz dashboard: https://id.digiflazz.com
 | 2 | GET /api/webhook/digiflazz | 405 | ✅ 405 |
 | 3 | POST digiflazz unsigned (dev) | 200 received | ✅ `{"received":true,"fulfillmentStatus":"success"}` |
 | 4 | POST digiflazz missing ref_id | 400 | ✅ `{"error":"Missing ref_id"}` |
-| 5 | POST midtrans bad signature | 200 matched:false | ⚠️ 400 "Invalid payload" (field incomplete) |
+| 5 | POST midtrans bad signature | 401 Invalid signature | ✅ 401 `{"error":"Invalid signature"}` |
+| 6 | POST midtrans valid sig + no order | 200 matched:false | ⚠️ Tidak bisa test tanpa real SERVER_KEY |
 
 ### Web Simulation Checklist (Playwright, 1440×900)
 

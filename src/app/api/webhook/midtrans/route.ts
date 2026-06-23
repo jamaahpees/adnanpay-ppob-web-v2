@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { query } from '@/lib/db'
 import { verifyMidtransSignature } from '@/lib/midtrans'
 import { createTransaction } from '@/lib/digiflazz'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export const runtime = 'nodejs'
 
@@ -78,6 +79,15 @@ async function triggerFulfillment(order: OrderRow): Promise<void> {
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
+  const ip = request.headers.get('x-forwarded-for') ?? 'unknown'
+  const rl = checkRateLimit(`midtrans:${ip}`, 20, 60_000)
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } },
+    )
+  }
+
   const raw = await request.text()
   let parsed: MidtransNotification
   try {

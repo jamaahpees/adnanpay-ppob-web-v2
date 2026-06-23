@@ -72,7 +72,7 @@ export async function loginAction(
     return await issueAdminSession(String(user.id), user.username)
   } catch (err) {
     console.error('loginAction DB error', err)
-    if (username === 'admin' && password === 'admin123') {
+    if (process.env.NODE_ENV !== 'production' && username === 'admin' && password === 'admin123') {
       return await issueAdminSession('0', 'admin', true)
     }
     return { success: false, error: 'Layanan login sedang bermasalah' }

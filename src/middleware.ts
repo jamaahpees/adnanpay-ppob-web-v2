@@ -10,7 +10,9 @@ const LOGIN_PATH = '/login'
 const TOKEN_COOKIE = process.env.ADMIN_JWT_COOKIE_NAME || 'admin-token'
 
 function getJwtSecret(): Uint8Array {
-  return new TextEncoder().encode(process.env.JWT_SECRET || '')
+  const secret = process.env.JWT_SECRET
+  if (!secret) throw new Error('JWT_SECRET is not set')
+  return new TextEncoder().encode(secret)
 }
 
 async function isValidAdminToken(token: string): Promise<boolean> {

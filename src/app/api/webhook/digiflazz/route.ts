@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { query } from '@/lib/db'
 import { verifyDigiflazzWebhook } from '@/lib/digiflazz'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export const runtime = 'nodejs'
 
@@ -28,6 +29,15 @@ function mapFulfillment(
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
+  const ip = request.headers.get('x-forwarded-for') ?? 'unknown'
+  const rl = checkRateLimit(`digiflazz:${ip}`, 30, 60_000)
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } },
+    )
+  }
+
   const raw = await request.text()
 
   const signature =

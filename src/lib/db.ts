@@ -19,7 +19,6 @@ export function getPool() {
 
 export async function query<T = unknown>(sql: string, values?: unknown[]): Promise<T> {
   const pool = getPool()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [rows] = await pool.execute(sql, values as any)
-  return rows as T
+  const [rows] = await pool.execute(sql, values as mysql.RowDataPacket[])
+  return rows as unknown as T
 }
